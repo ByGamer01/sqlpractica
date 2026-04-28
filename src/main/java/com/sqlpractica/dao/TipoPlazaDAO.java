@@ -13,4 +13,15 @@ import java.util.List;
 
 public class TipoPlazaDAO {
 
+    public void insert(TipoPlaza t) throws DAOException {
+        String sql = "INSERT INTO tipo_plaza(nombre, funcion) VALUES (?, ?)";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, t.getNombre());
+            ps.setString(2, t.getFuncion());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido crear el tipo de plaza: " + e.getMessage(), e);
+        }
+    }
 }
