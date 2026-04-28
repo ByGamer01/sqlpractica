@@ -39,4 +39,13 @@ public class Header extends JPanel {
         titleLabel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
         add(titleLabel);
     }
+
+    public void setTitle(String text) {
+        titleLabel.setText(text);
+    }
+
+    @Override
+    public Dimension getMaximumSize() {
+        return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+    }
 }
