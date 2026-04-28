@@ -63,4 +63,33 @@ public class EmpleadoPanel extends BaseCrudPanel {
 
         addActionButtons();
     }
+
+    @Override
+    public void reloadTable() {
+        try {
+            tableModel.setRowCount(0);
+            List<Empleado> lista = dao.findAll();
+            for (Empleado e : lista) {
+                tableModel.addRow(new Object[]{
+                        e.getNss(), e.getNombre(), e.getApellidos(),
+                        e.getEmail(), e.getIban()
+                });
+            }
+        } catch (DAOException ex) {
+            showError(ex.getMessage());
+        }
+    }
+
+    @Override
+    protected void onRowSelected(int rowIndex) {
+        tfNss.setText(str(tableModel.getValueAt(rowIndex, 0)));
+        tfNombre.setText(str(tableModel.getValueAt(rowIndex, 1)));
+        tfApellidos.setText(str(tableModel.getValueAt(rowIndex, 2)));
+        tfEmail.setText(str(tableModel.getValueAt(rowIndex, 3)));
+        tfIban.setText(str(tableModel.getValueAt(rowIndex, 4)));
+    }
+
+    private static String str(Object o) {
+        return o == null ? "" : o.toString();
+    }
 }
