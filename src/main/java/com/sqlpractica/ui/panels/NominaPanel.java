@@ -89,5 +89,71 @@ public class NominaPanel extends BaseCrudPanel {
         tfPlaza.setText(str(tableModel.getValueAt(rowIndex, 4)));
     }
 
+    @Override
+    protected void onCreate() {
+        Nomina n = readForm(false);
+        wrap(() -> dao.insert(n));
+        reloadTable();
+        onClear();
+        showInfo("Nómina creada con ID " + n.getId() + ".");
+    }
+
+    @Override
+    protected void onUpdate() {
+        if (tfId.getText().isBlank()) throw new RuntimeException("Selecciona una nómina para actualizar.");
+        Nomina n = readForm(true);
+        wrap(() -> dao.update(n));
+        reloadTable();
+        showInfo("Nómina actualizada.");
+    }
+
+    @Override
+    protected void onDelete() {
+        if (tfId.getText().isBlank()) throw new RuntimeException("Selecciona una nómina para eliminar.");
+        if (!confirm("¿Eliminar la nómina con ID " + tfId.getText() + "?")) return;
+        int id = Integer.parseInt(tfId.getText().trim());
+        wrap(() -> dao.delete(id));
+        reloadTable();
+        onClear();
+        showInfo("Nómina eliminada.");
+    }
+
+    @Override
+    protected void onClear() {
+        tfId.setText("");
+        tfIban.setText("");
+        tfImporte.setText("");
+        tfNss.setText("");
+        tfPlaza.setText("");
+        table.clearSelection();
+    }
+
+    private Nomina readForm(boolean withId) {
+        if (tfIban.getText().isBlank())  throw new RuntimeException("El IBAN es obligatorio.");
+        if (tfNss.getText().isBlank())   throw new RuntimeException("El NSS del empleado es obligatorio.");
+        if (tfPlaza.getText().isBlank()) throw new RuntimeException("El código de la plaza es obligatorio.");
+        double importePago;
+        try {
+            importePago = Double.parseDouble(tfImporte.getText().trim().replace(",", "."));
+        } catch (NumberFormatException ex) {
+            throw new RuntimeException("El importe tiene que ser un número.");
+        }
+        Integer id = null;
+        if (withId) {
+            try {
+                id = Integer.parseInt(tfId.getText().trim());
+            } catch (NumberFormatException ex) {
+                throw new RuntimeException("El ID de la nómina tiene que ser un entero.");
+            }
+        }
+        return new Nomina(
+                id,
+                tfIban.getText().trim(),
+                importePago,
+                tfNss.getText().trim(),
+                tfPlaza.getText().trim()
+        );
+    }
+
     private static String str(Object o) { return o == null ? "" : o.toString(); }
 }
