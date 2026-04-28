@@ -45,6 +45,21 @@ public class OcupaDAO {
         }
     }
 
+    public void delete(String nssEmpleado, String codigoPlaza) throws DAOException {
+        String sql = "DELETE FROM ocupa WHERE nss_empleado = ? AND codigo_plaza = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nssEmpleado);
+            ps.setString(2, codigoPlaza);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ninguna ocupación con esta combinación.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido eliminar la ocupación: " + e.getMessage(), e);
+        }
+    }
+
     private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
         if (value == null || value.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
