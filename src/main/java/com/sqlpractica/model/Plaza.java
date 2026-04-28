@@ -1,5 +1,7 @@
 package com.sqlpractica.model;
 
+import java.util.Objects;
+
 /**
  * Plaza (puesto de trabajo). Tiene una referencia opcional a otra plaza
  * que actúa como supervisora (auto-relación) y una referencia obligatoria
@@ -50,5 +52,23 @@ public class Plaza {
     public String getNombreTipoPlaza() { return nombreTipoPlaza; }
     public void setNombreTipoPlaza(String nombreTipoPlaza) {
         this.nombreTipoPlaza = nombreTipoPlaza;
+    }
+
+    @Override
+    public String toString() {
+        return codigo + " - " + nombre;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Plaza)) return false;
+        Plaza p = (Plaza) o;
+        return Objects.equals(codigo, p.codigo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codigo);
     }
 }
