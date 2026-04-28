@@ -14,6 +14,23 @@ import java.util.List;
 
 public class PlazaDAO {
 
+    public void insert(Plaza p) throws DAOException {
+        String sql = "INSERT INTO plaza(codigo, nombre, salario, codigo_plaza_supervisora, " +
+                     "informe_supervision, nombre_tipo_plaza) VALUES (?, ?, ?, ?, ?, ?)";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, p.getCodigo());
+            ps.setString(2, p.getNombre());
+            ps.setDouble(3, p.getSalario());
+            setNullableString(ps, 4, p.getCodigoPlazaSupervisora());
+            setNullableString(ps, 5, p.getInformeSupervision());
+            ps.setString(6, p.getNombreTipoPlaza());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido crear la plaza: " + e.getMessage(), e);
+        }
+    }
+
     private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
         if (value == null || value.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
