@@ -81,5 +81,66 @@ public class OcupaPanel extends BaseCrudPanel {
         tfFechaFin.setText(str(tableModel.getValueAt(rowIndex, 3)));
     }
 
+    @Override
+    protected void onCreate() {
+        Ocupa o = readForm();
+        wrap(() -> dao.insert(o));
+        reloadTable();
+        onClear();
+        showInfo("Ocupación creada.");
+    }
+
+    @Override
+    protected void onUpdate() {
+        Ocupa o = readForm();
+        wrap(() -> dao.update(o));
+        reloadTable();
+        showInfo("Ocupación actualizada.");
+    }
+
+    @Override
+    protected void onDelete() {
+        if (tfNss.getText().isBlank() || tfCodigoPlaza.getText().isBlank())
+            throw new RuntimeException("Selecciona una ocupación.");
+        if (!confirm("¿Eliminar esta ocupación?")) return;
+        String nss = tfNss.getText().trim();
+        String codigo = tfCodigoPlaza.getText().trim();
+        wrap(() -> dao.delete(nss, codigo));
+        reloadTable();
+        onClear();
+        showInfo("Ocupación eliminada.");
+    }
+
+    @Override
+    protected void onClear() {
+        tfNss.setText("");
+        tfCodigoPlaza.setText("");
+        tfFechaInicio.setText("");
+        tfFechaFin.setText("");
+        table.clearSelection();
+    }
+
+    private Ocupa readForm() {
+        if (tfNss.getText().isBlank())          throw new RuntimeException("Falta el NSS del empleado.");
+        if (tfCodigoPlaza.getText().isBlank())  throw new RuntimeException("Falta el código de la plaza.");
+        if (tfFechaInicio.getText().isBlank())  throw new RuntimeException("Falta la fecha de inicio.");
+        validateDate(tfFechaInicio.getText().trim(), "fecha de inicio");
+        if (!tfFechaFin.getText().isBlank()) validateDate(tfFechaFin.getText().trim(), "fecha fin");
+        return new Ocupa(
+                tfNss.getText().trim(),
+                tfCodigoPlaza.getText().trim(),
+                tfFechaInicio.getText().trim(),
+                tfFechaFin.getText().trim().isEmpty() ? null : tfFechaFin.getText().trim()
+        );
+    }
+
+    private void validateDate(String text, String fieldName) {
+        try {
+            java.time.LocalDate.parse(text);
+        } catch (java.time.format.DateTimeParseException ex) {
+            throw new RuntimeException("La " + fieldName + " tiene que tener formato yyyy-MM-dd (p. ej. 2025-03-14).");
+        }
+    }
+
     private static String str(Object o) { return o == null ? "" : o.toString(); }
 }
