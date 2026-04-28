@@ -16,4 +16,15 @@ public class Plaza {
 
     public Plaza() {
     }
+
+    public Plaza(String codigo, String nombre, double salario,
+                 String codigoPlazaSupervisora, String informeSupervision,
+                 String nombreTipoPlaza) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.salario = salario;
+        this.codigoPlazaSupervisora = codigoPlazaSupervisora;
+        this.informeSupervision = informeSupervision;
+        this.nombreTipoPlaza = nombreTipoPlaza;
+    }
 }
