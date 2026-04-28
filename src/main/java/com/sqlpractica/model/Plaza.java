@@ -36,4 +36,19 @@ public class Plaza {
 
     public double getSalario() { return salario; }
     public void setSalario(double salario) { this.salario = salario; }
+
+    public String getCodigoPlazaSupervisora() { return codigoPlazaSupervisora; }
+    public void setCodigoPlazaSupervisora(String codigoPlazaSupervisora) {
+        this.codigoPlazaSupervisora = codigoPlazaSupervisora;
+    }
+
+    public String getInformeSupervision() { return informeSupervision; }
+    public void setInformeSupervision(String informeSupervision) {
+        this.informeSupervision = informeSupervision;
+    }
+
+    public String getNombreTipoPlaza() { return nombreTipoPlaza; }
+    public void setNombreTipoPlaza(String nombreTipoPlaza) {
+        this.nombreTipoPlaza = nombreTipoPlaza;
+    }
 }
