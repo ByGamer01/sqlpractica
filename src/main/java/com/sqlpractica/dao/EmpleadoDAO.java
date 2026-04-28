@@ -17,4 +17,18 @@ import java.util.List;
  */
 public class EmpleadoDAO {
 
+    public void insert(Empleado e) throws DAOException {
+        String sql = "INSERT INTO empleado(nss, nombre, apellidos, email, iban) VALUES (?, ?, ?, ?, ?)";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, e.getNss());
+            ps.setString(2, e.getNombre());
+            ps.setString(3, e.getApellidos());
+            ps.setString(4, e.getEmail());
+            ps.setString(5, e.getIban());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DAOException("No se ha podido crear el empleado: " + ex.getMessage(), ex);
+        }
+    }
 }
