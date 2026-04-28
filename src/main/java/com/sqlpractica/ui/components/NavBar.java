@@ -58,4 +58,34 @@ public class NavBar extends JPanel {
     public Dimension getMaximumSize() {
         return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
     }
+
+    /** Botón individual, dibujado como una "pill". */
+    private class NavItem extends JPanel {
+        private final JLabel label;
+        private boolean selected;
+
+        NavItem(String key, String text) {
+            setOpaque(true);
+            setBackground(Theme.BG_HEADER);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setLayout(new GridLayout(1, 1));
+
+            label = new JLabel(text, SwingConstants.CENTER);
+            label.setFont(Theme.FONT_NAV);
+            label.setForeground(Theme.TEXT_SECONDARY);
+            label.setBorder(BorderFactory.createEmptyBorder(8, 4, 8, 4));
+            add(label);
+
+            addMouseListener(new MouseAdapter() {
+                @Override public void mouseClicked(MouseEvent e) { NavBar.this.select(key); }
+            });
+        }
+
+        void setSelected(boolean s) {
+            this.selected = s;
+            label.setForeground(s ? Theme.TEXT_ON_ACCENT : Theme.TEXT_SECONDARY);
+            setBackground(s ? Theme.ACCENT : Theme.BG_HEADER);
+            repaint();
+        }
+    }
 }
