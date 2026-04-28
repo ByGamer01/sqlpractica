@@ -14,4 +14,13 @@ public class Nomina {
 
     public Nomina() {
     }
+
+    public Nomina(Integer id, String ibanPago, double importePago,
+                  String nssEmpleado, String codigoPlaza) {
+        this.id = id;
+        this.ibanPago = ibanPago;
+        this.importePago = importePago;
+        this.nssEmpleado = nssEmpleado;
+        this.codigoPlaza = codigoPlaza;
+    }
 }
