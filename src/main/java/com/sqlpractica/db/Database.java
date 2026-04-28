@@ -38,4 +38,21 @@ public final class Database {
             throw new DAOException("No se ha podido conectar a la base de datos.", e);
         }
     }
+
+    /**
+     * Crea el esquema completo si no existe. Se llama una sola vez
+     * al inicio de la aplicación.
+     */
+    public static void initSchema() throws DAOException {
+        String[] ddl = new String[] {
+        };
+
+        try (Statement st = getConnection().createStatement()) {
+            for (String sql : ddl) {
+                st.execute(sql);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error inicializando el esquema de la base de datos.", e);
+        }
+    }
 }
