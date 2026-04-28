@@ -39,4 +39,18 @@ public class TipoPlazaDAO {
             throw new DAOException("No se ha podido actualizar el tipo de plaza: " + e.getMessage(), e);
         }
     }
+
+    public void delete(String nombre) throws DAOException {
+        String sql = "DELETE FROM tipo_plaza WHERE nombre = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ningún tipo de plaza con nombre '" + nombre + "'.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido eliminar el tipo de plaza (puede haber plazas que lo usen): " + e.getMessage(), e);
+        }
+    }
 }
