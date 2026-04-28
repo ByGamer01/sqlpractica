@@ -98,4 +98,18 @@ public final class Database {
             throw new DAOException("Error inicializando el esquema de la base de datos.", e);
         }
     }
+
+    /**
+     * Cierra la conexión. Pensado para llamarse al salir de la aplicación.
+     */
+    public static synchronized void close() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            } finally {
+                connection = null;
+            }
+        }
+    }
 }
