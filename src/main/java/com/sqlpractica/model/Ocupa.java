@@ -13,4 +13,11 @@ public class Ocupa {
 
     public Ocupa() {
     }
+
+    public Ocupa(String nssEmpleado, String codigoPlaza, String fechaInicio, String fechaFin) {
+        this.nssEmpleado = nssEmpleado;
+        this.codigoPlaza = codigoPlaza;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+    }
 }
