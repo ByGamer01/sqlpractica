@@ -23,4 +23,21 @@ public class Nomina {
         this.nssEmpleado = nssEmpleado;
         this.codigoPlaza = codigoPlaza;
     }
+
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getIbanPago() { return ibanPago; }
+    public void setIbanPago(String ibanPago) { this.ibanPago = ibanPago; }
+
+    public double getImportePago() { return importePago; }
+    public void setImportePago(double importePago) {
+        this.importePago = importePago;
+    }
+
+    public String getNssEmpleado() { return nssEmpleado; }
+    public void setNssEmpleado(String nssEmpleado) { this.nssEmpleado = nssEmpleado; }
+
+    public String getCodigoPlaza() { return codigoPlaza; }
+    public void setCodigoPlaza(String codigoPlaza) { this.codigoPlaza = codigoPlaza; }
 }
