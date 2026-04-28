@@ -14,4 +14,12 @@ public class Empleado {
 
     public Empleado() {
     }
+
+    public Empleado(String nss, String nombre, String apellidos, String email, String iban) {
+        this.nss = nss;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.email = email;
+        this.iban = iban;
+    }
 }
