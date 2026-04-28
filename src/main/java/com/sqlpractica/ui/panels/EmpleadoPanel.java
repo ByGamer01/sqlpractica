@@ -89,6 +89,67 @@ public class EmpleadoPanel extends BaseCrudPanel {
         tfIban.setText(str(tableModel.getValueAt(rowIndex, 4)));
     }
 
+    @Override
+    protected void onCreate() {
+        validateRequired();
+        Empleado e = readForm();
+        wrap(() -> dao.insert(e));
+        reloadTable();
+        onClear();
+        showInfo("Empleado creado correctamente.");
+    }
+
+    @Override
+    protected void onUpdate() {
+        validateRequired();
+        Empleado e = readForm();
+        wrap(() -> dao.update(e));
+        reloadTable();
+        showInfo("Empleado actualizado.");
+    }
+
+    @Override
+    protected void onDelete() {
+        if (tfNss.getText().isBlank()) {
+            throw new RuntimeException("Selecciona un empleado para eliminar.");
+        }
+        if (!confirm("¿Estás seguro de que quieres eliminar el empleado con NSS '" + tfNss.getText() + "'?\n" +
+                     "También se perderán sus ocupaciones y nóminas.")) {
+            return;
+        }
+        String nss = tfNss.getText().trim();
+        wrap(() -> dao.delete(nss));
+        reloadTable();
+        onClear();
+        showInfo("Empleado eliminado.");
+    }
+
+    @Override
+    protected void onClear() {
+        tfNss.setText("");
+        tfNombre.setText("");
+        tfApellidos.setText("");
+        tfEmail.setText("");
+        tfIban.setText("");
+        table.clearSelection();
+    }
+
+    private void validateRequired() {
+        if (tfNss.getText().isBlank()) throw new RuntimeException("El campo NSS es obligatorio.");
+        if (tfNombre.getText().isBlank()) throw new RuntimeException("El campo Nombre es obligatorio.");
+        if (tfApellidos.getText().isBlank()) throw new RuntimeException("El campo Apellidos es obligatorio.");
+    }
+
+    private Empleado readForm() {
+        return new Empleado(
+                tfNss.getText().trim(),
+                tfNombre.getText().trim(),
+                tfApellidos.getText().trim(),
+                tfEmail.getText().trim(),
+                tfIban.getText().trim()
+        );
+    }
+
     private static String str(Object o) {
         return o == null ? "" : o.toString();
     }
