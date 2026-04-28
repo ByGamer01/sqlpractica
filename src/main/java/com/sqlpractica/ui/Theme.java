@@ -30,4 +30,11 @@ public final class Theme {
 
     public static final Color BORDER_LIGHT = new Color(0xe2e8f0);
     public static final Color BORDER_INPUT = new Color(0xcbd5e1);
+
+    public static final Color ACCENT       = new Color(0x6366f1);
+    public static final Color ACCENT_HOVER = new Color(0x4f46e5);
+    public static final Color INFO         = new Color(0x0ea5e9);
+    public static final Color INFO_HOVER   = new Color(0x0284c7);
+    public static final Color DANGER       = new Color(0xef4444);
+    public static final Color DANGER_HOVER = new Color(0xdc2626);
 }
