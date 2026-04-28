@@ -60,6 +60,27 @@ public class OcupaDAO {
         }
     }
 
+    public List<Ocupa> findAll() throws DAOException {
+        String sql = "SELECT nss_empleado, codigo_plaza, fecha_inicio, fecha_fin FROM ocupa " +
+                     "ORDER BY fecha_inicio DESC";
+        Connection conn = Database.getConnection();
+        List<Ocupa> resultado = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resultado.add(new Ocupa(
+                        rs.getString("nss_empleado"),
+                        rs.getString("codigo_plaza"),
+                        rs.getString("fecha_inicio"),
+                        rs.getString("fecha_fin")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error leyendo las ocupaciones: " + e.getMessage(), e);
+        }
+        return resultado;
+    }
+
     private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
         if (value == null || value.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
