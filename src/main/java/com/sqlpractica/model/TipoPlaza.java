@@ -1,5 +1,7 @@
 package com.sqlpractica.model;
 
+import java.util.Objects;
+
 /**
  * Tipo de plaza (categoría laboral): nombre (PK) y función.
  */
@@ -25,5 +27,18 @@ public class TipoPlaza {
     @Override
     public String toString() {
         return nombre;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TipoPlaza)) return false;
+        TipoPlaza t = (TipoPlaza) o;
+        return Objects.equals(nombre, t.nombre);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre);
     }
 }
