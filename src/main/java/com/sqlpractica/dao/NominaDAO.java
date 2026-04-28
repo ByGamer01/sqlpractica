@@ -55,4 +55,18 @@ public class NominaDAO {
             throw new DAOException("No se ha podido actualizar la nómina: " + e.getMessage(), e);
         }
     }
+
+    public void delete(int id) throws DAOException {
+        String sql = "DELETE FROM nomina WHERE id = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ninguna nómina con ID " + id + ".");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido eliminar la nómina: " + e.getMessage(), e);
+        }
+    }
 }
