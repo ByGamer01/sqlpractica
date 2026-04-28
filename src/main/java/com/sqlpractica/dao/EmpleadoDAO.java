@@ -64,6 +64,21 @@ public class EmpleadoDAO {
         }
     }
 
+    public List<Empleado> findAll() throws DAOException {
+        String sql = "SELECT nss, nombre, apellidos, email, iban FROM empleado ORDER BY apellidos, nombre";
+        Connection conn = Database.getConnection();
+        List<Empleado> resultado = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resultado.add(mapRow(rs));
+            }
+        } catch (SQLException ex) {
+            throw new DAOException("Error leyendo la lista de empleados: " + ex.getMessage(), ex);
+        }
+        return resultado;
+    }
+
     public Empleado findByNss(String nss) throws DAOException {
         String sql = "SELECT nss, nombre, apellidos, email, iban FROM empleado WHERE nss = ?";
         Connection conn = Database.getConnection();
