@@ -15,4 +15,15 @@ public class TipoPlaza {
         this.nombre = nombre;
         this.funcion = funcion;
     }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getFuncion() { return funcion; }
+    public void setFuncion(String funcion) { this.funcion = funcion; }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }
