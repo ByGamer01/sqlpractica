@@ -57,5 +57,29 @@ public class AppFrame extends JFrame {
         for (Map.Entry<String, BaseCrudPanel> e : panels.entrySet()) {
             cardContainer.add(e.getValue(), e.getKey());
         }
+
+        NavBar navBar = new NavBar(this::onNavSelect);
+        navBar.addTab("empleados", "Empleados");
+        navBar.addTab("plazas",    "Plazas");
+        navBar.addTab("tipos",     "Tipos");
+        navBar.addTab("ocupa",     "Ocupa");
+        navBar.addTab("nominas",   "Nóminas");
+
+        JPanel center = new JPanel(new BorderLayout());
+        center.setBackground(Theme.BG_APP);
+        center.add(navBar, BorderLayout.NORTH);
+        center.add(cardContainer, BorderLayout.CENTER);
+
+        add(header, BorderLayout.NORTH);
+        add(center, BorderLayout.CENTER);
+
+        navBar.select("empleados");
+    }
+
+    private void onNavSelect(String key) {
+        cards.show(cardContainer, key);
+        header.setTitle(titles.get(key));
+        BaseCrudPanel panel = panels.get(key);
+        if (panel != null) panel.reloadTable();
     }
 }
