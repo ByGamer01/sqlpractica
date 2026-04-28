@@ -63,4 +63,30 @@ public class EmpleadoDAO {
             throw new DAOException("No se ha podido eliminar el empleado: " + ex.getMessage(), ex);
         }
     }
+
+    public Empleado findByNss(String nss) throws DAOException {
+        String sql = "SELECT nss, nombre, apellidos, email, iban FROM empleado WHERE nss = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nss);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+                return null;
+            }
+        } catch (SQLException ex) {
+            throw new DAOException("Error consultando el empleado: " + ex.getMessage(), ex);
+        }
+    }
+
+    private Empleado mapRow(ResultSet rs) throws SQLException {
+        return new Empleado(
+                rs.getString("nss"),
+                rs.getString("nombre"),
+                rs.getString("apellidos"),
+                rs.getString("email"),
+                rs.getString("iban")
+        );
+    }
 }
