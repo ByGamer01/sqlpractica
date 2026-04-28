@@ -31,4 +31,15 @@ public class StyledTextField extends JTextField {
         Dimension d = super.getPreferredSize();
         return new Dimension(d.width, 32);
     }
+
+    /**
+     * Etiqueta en mayúsculas pequeñas, color tenue, para encima de un campo.
+     */
+    public static JLabel makeLabel(String text) {
+        JLabel l = new JLabel(text);
+        l.setFont(Theme.FONT_LABEL);
+        l.setForeground(Theme.TEXT_SECONDARY);
+        l.setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 0));
+        return l;
+    }
 }
