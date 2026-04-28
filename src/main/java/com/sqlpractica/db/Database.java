@@ -45,6 +45,13 @@ public final class Database {
      */
     public static void initSchema() throws DAOException {
         String[] ddl = new String[] {
+            "CREATE TABLE IF NOT EXISTS empleado (" +
+            "  nss TEXT PRIMARY KEY," +
+            "  nombre TEXT NOT NULL," +
+            "  apellidos TEXT NOT NULL," +
+            "  email TEXT," +
+            "  iban TEXT" +
+            ");"
         };
 
         try (Statement st = getConnection().createStatement()) {
