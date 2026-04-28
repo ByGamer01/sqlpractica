@@ -36,4 +36,26 @@ public class NavBar extends JPanel {
         ));
         setLayout(new GridLayout(1, 5, 4, 0));
     }
+
+    public void addTab(String key, String label) {
+        NavItem item = new NavItem(key, label);
+        items.put(key, item);
+        add(item);
+    }
+
+    public void select(String key) {
+        if (!items.containsKey(key)) return;
+        currentKey = key;
+        for (Map.Entry<String, NavItem> e : items.entrySet()) {
+            e.getValue().setSelected(e.getKey().equals(key));
+        }
+        if (onSelect != null) onSelect.accept(key);
+    }
+
+    public String getCurrentKey() { return currentKey; }
+
+    @Override
+    public Dimension getMaximumSize() {
+        return new Dimension(Integer.MAX_VALUE, getPreferredSize().height);
+    }
 }
