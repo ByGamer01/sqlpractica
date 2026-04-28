@@ -53,4 +53,19 @@ public class TipoPlazaDAO {
             throw new DAOException("No se ha podido eliminar el tipo de plaza (puede haber plazas que lo usen): " + e.getMessage(), e);
         }
     }
+
+    public List<TipoPlaza> findAll() throws DAOException {
+        String sql = "SELECT nombre, funcion FROM tipo_plaza ORDER BY nombre";
+        Connection conn = Database.getConnection();
+        List<TipoPlaza> resultado = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resultado.add(new TipoPlaza(rs.getString("nombre"), rs.getString("funcion")));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error leyendo los tipos de plaza: " + e.getMessage(), e);
+        }
+        return resultado;
+    }
 }
