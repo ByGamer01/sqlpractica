@@ -65,6 +65,29 @@ public class PlazaDAO {
         }
     }
 
+    public List<Plaza> findAll() throws DAOException {
+        String sql = "SELECT codigo, nombre, salario, codigo_plaza_supervisora, " +
+                     "informe_supervision, nombre_tipo_plaza FROM plaza ORDER BY codigo";
+        Connection conn = Database.getConnection();
+        List<Plaza> resultado = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resultado.add(new Plaza(
+                        rs.getString("codigo"),
+                        rs.getString("nombre"),
+                        rs.getDouble("salario"),
+                        rs.getString("codigo_plaza_supervisora"),
+                        rs.getString("informe_supervision"),
+                        rs.getString("nombre_tipo_plaza")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error leyendo las plazas: " + e.getMessage(), e);
+        }
+        return resultado;
+    }
+
     private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
         if (value == null || value.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
