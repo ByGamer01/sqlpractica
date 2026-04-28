@@ -1,5 +1,7 @@
 package com.sqlpractica.model;
 
+import java.util.Objects;
+
 /**
  * Nómina pagada a un empleado por el trabajo de una plaza concreta.
  * El ID es autoincremental.
@@ -40,4 +42,17 @@ public class Nomina {
 
     public String getCodigoPlaza() { return codigoPlaza; }
     public void setCodigoPlaza(String codigoPlaza) { this.codigoPlaza = codigoPlaza; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Nomina)) return false;
+        Nomina n = (Nomina) o;
+        return Objects.equals(id, n.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
