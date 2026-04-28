@@ -28,6 +28,23 @@ public class OcupaDAO {
         }
     }
 
+    public void update(Ocupa o) throws DAOException {
+        String sql = "UPDATE ocupa SET fecha_inicio = ?, fecha_fin = ? WHERE nss_empleado = ? AND codigo_plaza = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, o.getFechaInicio());
+            setNullableString(ps, 2, o.getFechaFin());
+            ps.setString(3, o.getNssEmpleado());
+            ps.setString(4, o.getCodigoPlaza());
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ninguna ocupación para este empleado y plaza.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido actualizar la ocupación: " + e.getMessage(), e);
+        }
+    }
+
     private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
         if (value == null || value.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
