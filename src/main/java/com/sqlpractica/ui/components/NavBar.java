@@ -87,5 +87,22 @@ public class NavBar extends JPanel {
             setBackground(s ? Theme.ACCENT : Theme.BG_HEADER);
             repaint();
         }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            if (selected) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                try {
+                    g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,
+                                        java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(Theme.ACCENT);
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                } finally {
+                    g2.dispose();
+                }
+            } else {
+                super.paintComponent(g);
+            }
+        }
     }
 }
