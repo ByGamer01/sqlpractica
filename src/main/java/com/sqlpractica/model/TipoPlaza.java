@@ -10,4 +10,9 @@ public class TipoPlaza {
 
     public TipoPlaza() {
     }
+
+    public TipoPlaza(String nombre, String funcion) {
+        this.nombre = nombre;
+        this.funcion = funcion;
+    }
 }
