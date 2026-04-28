@@ -51,6 +51,22 @@ public final class Database {
             "  apellidos TEXT NOT NULL," +
             "  email TEXT," +
             "  iban TEXT" +
+            ");",
+
+            "CREATE TABLE IF NOT EXISTS tipo_plaza (" +
+            "  nombre TEXT PRIMARY KEY," +
+            "  funcion TEXT" +
+            ");",
+
+            "CREATE TABLE IF NOT EXISTS plaza (" +
+            "  codigo TEXT PRIMARY KEY," +
+            "  nombre TEXT NOT NULL," +
+            "  salario REAL NOT NULL," +
+            "  codigo_plaza_supervisora TEXT," +
+            "  informe_supervision TEXT," +
+            "  nombre_tipo_plaza TEXT NOT NULL," +
+            "  FOREIGN KEY (codigo_plaza_supervisora) REFERENCES plaza(codigo) ON DELETE SET NULL," +
+            "  FOREIGN KEY (nombre_tipo_plaza) REFERENCES tipo_plaza(nombre) ON DELETE RESTRICT" +
             ");"
         };
 
