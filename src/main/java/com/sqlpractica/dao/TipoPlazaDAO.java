@@ -24,4 +24,19 @@ public class TipoPlazaDAO {
             throw new DAOException("No se ha podido crear el tipo de plaza: " + e.getMessage(), e);
         }
     }
+
+    public void update(TipoPlaza t) throws DAOException {
+        String sql = "UPDATE tipo_plaza SET funcion = ? WHERE nombre = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, t.getFuncion());
+            ps.setString(2, t.getNombre());
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ningún tipo de plaza con nombre '" + t.getNombre() + "'.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido actualizar el tipo de plaza: " + e.getMessage(), e);
+        }
+    }
 }
