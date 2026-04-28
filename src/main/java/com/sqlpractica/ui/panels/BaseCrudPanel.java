@@ -92,4 +92,37 @@ public abstract class BaseCrudPanel extends JPanel {
         formPanel.setBorder(new EmptyBorder(12, 0, 0, 0));
         add(formPanel, BorderLayout.SOUTH);
     }
+
+    protected abstract void buildForm();
+    public abstract void reloadTable();
+    protected abstract void onRowSelected(int rowIndex);
+    protected abstract void onCreate();
+    protected abstract void onUpdate();
+    protected abstract void onDelete();
+    protected abstract void onClear();
+
+    protected void addActionButtons() {
+        JPanel buttons = new JPanel(new GridLayout(1, 4, 6, 0));
+        buttons.setOpaque(false);
+        buttons.setAlignmentX(Component.LEFT_ALIGNMENT);
+        buttons.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+        StyledButton bCreate = StyledButton.primary("Crear");
+        StyledButton bUpdate = StyledButton.info("Editar");
+        StyledButton bDelete = StyledButton.danger("Eliminar");
+        StyledButton bClear  = StyledButton.secondary("Limpiar");
+
+        bCreate.addActionListener(e -> safe(this::onCreate));
+        bUpdate.addActionListener(e -> safe(this::onUpdate));
+        bDelete.addActionListener(e -> safe(this::onDelete));
+        bClear.addActionListener (e -> onClear());
+
+        buttons.add(bCreate);
+        buttons.add(bUpdate);
+        buttons.add(bDelete);
+        buttons.add(bClear);
+
+        formPanel.add(Box.createVerticalStrut(4));
+        formPanel.add(buttons);
+    }
 }
