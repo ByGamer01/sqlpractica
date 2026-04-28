@@ -40,5 +40,22 @@ public class AppFrame extends JFrame {
         setResizable(false);
         getContentPane().setBackground(Theme.BG_APP);
         setLayout(new BorderLayout());
+
+        panels.put("empleados", new EmpleadoPanel());
+        panels.put("plazas",    new PlazaPanel());
+        panels.put("tipos",     new TipoPlazaPanel());
+        panels.put("ocupa",     new OcupaPanel());
+        panels.put("nominas",   new NominaPanel());
+
+        titles.put("empleados", "Empleados");
+        titles.put("plazas",    "Plazas");
+        titles.put("tipos",     "Tipos de plaza");
+        titles.put("ocupa",     "Ocupaciones");
+        titles.put("nominas",   "Nóminas");
+
+        cardContainer.setBackground(Theme.BG_APP);
+        for (Map.Entry<String, BaseCrudPanel> e : panels.entrySet()) {
+            cardContainer.add(e.getValue(), e.getKey());
+        }
     }
 }
