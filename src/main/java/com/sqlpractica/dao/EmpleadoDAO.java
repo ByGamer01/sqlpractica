@@ -49,4 +49,18 @@ public class EmpleadoDAO {
             throw new DAOException("No se ha podido actualizar el empleado: " + ex.getMessage(), ex);
         }
     }
+
+    public void delete(String nss) throws DAOException {
+        String sql = "DELETE FROM empleado WHERE nss = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nss);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ningún empleado con NSS '" + nss + "'.");
+            }
+        } catch (SQLException ex) {
+            throw new DAOException("No se ha podido eliminar el empleado: " + ex.getMessage(), ex);
+        }
+    }
 }
