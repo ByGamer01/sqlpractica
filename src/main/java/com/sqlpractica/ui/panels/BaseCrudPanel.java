@@ -42,7 +42,54 @@ public abstract class BaseCrudPanel extends JPanel {
             @Override public boolean isCellEditable(int row, int col) { return false; }
         };
         table = new JTable(tableModel);
+        table.setFont(Theme.FONT_TABLE);
+        table.setRowHeight(26);
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setSelectionBackground(Theme.BG_SELECTED);
+        table.setSelectionForeground(Theme.TEXT_PRIMARY);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setFillsViewportHeight(true);
+
+        JTableHeader header = table.getTableHeader();
+        header.setFont(Theme.FONT_TABLE_HEAD);
+        header.setBackground(Theme.BG_TABLE_HEADER);
+        header.setForeground(Theme.TEXT_SECONDARY);
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER_LIGHT));
+        header.setReorderingAllowed(false);
+
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable tbl, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(tbl, value, isSelected, hasFocus, row, column);
+                ((javax.swing.JLabel) c).setBorder(new EmptyBorder(2, 8, 2, 8));
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Theme.BG_CARD : Theme.BG_TABLE_ALT);
+                    c.setForeground(Theme.TEXT_PRIMARY);
+                }
+                return c;
+            }
+        };
+        for (int i = 0; i < columns.length; i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
+        }
+
+        JScrollPane sp = new JScrollPane(table);
+        sp.setBorder(BorderFactory.createLineBorder(Theme.BORDER_LIGHT, 1, true));
+        sp.getViewport().setBackground(Theme.BG_CARD);
+        add(sp, BorderLayout.CENTER);
+
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && table.getSelectedRow() >= 0) {
+                onRowSelected(table.getSelectedRow());
+            }
+        });
 
         formPanel = new JPanel();
+        formPanel.setOpaque(false);
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBorder(new EmptyBorder(12, 0, 0, 0));
+        add(formPanel, BorderLayout.SOUTH);
     }
 }
