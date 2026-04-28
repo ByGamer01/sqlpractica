@@ -31,6 +31,26 @@ public class PlazaDAO {
         }
     }
 
+    public void update(Plaza p) throws DAOException {
+        String sql = "UPDATE plaza SET nombre = ?, salario = ?, codigo_plaza_supervisora = ?, " +
+                     "informe_supervision = ?, nombre_tipo_plaza = ? WHERE codigo = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, p.getNombre());
+            ps.setDouble(2, p.getSalario());
+            setNullableString(ps, 3, p.getCodigoPlazaSupervisora());
+            setNullableString(ps, 4, p.getInformeSupervision());
+            ps.setString(5, p.getNombreTipoPlaza());
+            ps.setString(6, p.getCodigo());
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ninguna plaza con código '" + p.getCodigo() + "'.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido actualizar la plaza: " + e.getMessage(), e);
+        }
+    }
+
     private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
         if (value == null || value.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
