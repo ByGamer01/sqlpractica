@@ -67,6 +67,26 @@ public final class Database {
             "  nombre_tipo_plaza TEXT NOT NULL," +
             "  FOREIGN KEY (codigo_plaza_supervisora) REFERENCES plaza(codigo) ON DELETE SET NULL," +
             "  FOREIGN KEY (nombre_tipo_plaza) REFERENCES tipo_plaza(nombre) ON DELETE RESTRICT" +
+            ");",
+
+            "CREATE TABLE IF NOT EXISTS ocupa (" +
+            "  nss_empleado TEXT NOT NULL," +
+            "  codigo_plaza TEXT NOT NULL," +
+            "  fecha_inicio TEXT NOT NULL," +
+            "  fecha_fin TEXT," +
+            "  PRIMARY KEY (nss_empleado, codigo_plaza)," +
+            "  FOREIGN KEY (nss_empleado) REFERENCES empleado(nss) ON DELETE CASCADE," +
+            "  FOREIGN KEY (codigo_plaza) REFERENCES plaza(codigo) ON DELETE CASCADE" +
+            ");",
+
+            "CREATE TABLE IF NOT EXISTS nomina (" +
+            "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "  iban_pago TEXT NOT NULL," +
+            "  importe_pago REAL NOT NULL," +
+            "  nss_empleado TEXT NOT NULL," +
+            "  codigo_plaza TEXT NOT NULL," +
+            "  FOREIGN KEY (nss_empleado) REFERENCES empleado(nss) ON DELETE CASCADE," +
+            "  FOREIGN KEY (codigo_plaza) REFERENCES plaza(codigo) ON DELETE CASCADE" +
             ");"
         };
 
