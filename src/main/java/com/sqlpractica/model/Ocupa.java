@@ -1,5 +1,7 @@
 package com.sqlpractica.model;
 
+import java.util.Objects;
+
 /**
  * Relación "ocupa" entre un empleado y una plaza, con fechas de inicio y fin.
  * La clave primaria es compuesta: (NSS empleado, código plaza).
@@ -32,4 +34,18 @@ public class Ocupa {
 
     public String getFechaFin() { return fechaFin; }
     public void setFechaFin(String fechaFin) { this.fechaFin = fechaFin; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ocupa)) return false;
+        Ocupa other = (Ocupa) o;
+        return Objects.equals(nssEmpleado, other.nssEmpleado)
+                && Objects.equals(codigoPlaza, other.codigoPlaza);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nssEmpleado, codigoPlaza);
+    }
 }
