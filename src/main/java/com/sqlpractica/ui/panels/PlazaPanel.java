@@ -105,5 +105,65 @@ public class PlazaPanel extends BaseCrudPanel {
         }
     }
 
+    @Override
+    protected void onCreate() {
+        Plaza p = readForm();
+        wrap(() -> dao.insert(p));
+        reloadTable();
+        onClear();
+        showInfo("Plaza creada.");
+    }
+
+    @Override
+    protected void onUpdate() {
+        Plaza p = readForm();
+        wrap(() -> dao.update(p));
+        reloadTable();
+        showInfo("Plaza actualizada.");
+    }
+
+    @Override
+    protected void onDelete() {
+        if (tfCodigo.getText().isBlank()) throw new RuntimeException("Selecciona una plaza.");
+        if (!confirm("¿Eliminar la plaza '" + tfCodigo.getText() + "'?\n" +
+                     "Se perderán las ocupaciones y nóminas asociadas.")) return;
+        String codigo = tfCodigo.getText().trim();
+        wrap(() -> dao.delete(codigo));
+        reloadTable();
+        onClear();
+        showInfo("Plaza eliminada.");
+    }
+
+    @Override
+    protected void onClear() {
+        tfCodigo.setText("");
+        tfNombre.setText("");
+        tfSalario.setText("");
+        tfSupervisora.setText("");
+        tfInforme.setText("");
+        tfTipo.setText("");
+        table.clearSelection();
+    }
+
+    private Plaza readForm() {
+        if (tfCodigo.getText().isBlank()) throw new RuntimeException("El código es obligatorio.");
+        if (tfNombre.getText().isBlank()) throw new RuntimeException("El nombre es obligatorio.");
+        if (tfTipo.getText().isBlank()) throw new RuntimeException("El nombre del tipo es obligatorio.");
+        double salario;
+        try {
+            salario = Double.parseDouble(tfSalario.getText().trim().replace(",", "."));
+        } catch (NumberFormatException ex) {
+            throw new RuntimeException("El salario tiene que ser un número (por ejemplo 1850.50).");
+        }
+        return new Plaza(
+                tfCodigo.getText().trim(),
+                tfNombre.getText().trim(),
+                salario,
+                tfSupervisora.getText().trim().isEmpty() ? null : tfSupervisora.getText().trim(),
+                tfInforme.getText().trim().isEmpty() ? null : tfInforme.getText().trim(),
+                tfTipo.getText().trim()
+        );
+    }
+
     private static String str(Object o) { return o == null ? "" : o.toString(); }
 }
