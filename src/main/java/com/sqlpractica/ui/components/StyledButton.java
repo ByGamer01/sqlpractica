@@ -44,4 +44,58 @@ public class StyledButton extends JButton {
             @Override public void mouseExited (MouseEvent e) { hovering = false; repaint(); }
         });
     }
+
+    public static StyledButton primary(String text) {
+        return new StyledButton(text, Theme.ACCENT, Theme.ACCENT_HOVER, Theme.TEXT_ON_ACCENT);
+    }
+
+    public static StyledButton info(String text) {
+        return new StyledButton(text, Theme.INFO, Theme.INFO_HOVER, Theme.TEXT_ON_ACCENT);
+    }
+
+    public static StyledButton danger(String text) {
+        return new StyledButton(text, Theme.DANGER, Theme.DANGER_HOVER, Theme.TEXT_ON_ACCENT);
+    }
+
+    public static StyledButton secondary(String text) {
+        return new StyledButton(text, Theme.BG_CARD, Theme.BG_TABLE_HEADER, Theme.TEXT_SECONDARY);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension d = super.getPreferredSize();
+        return new Dimension(d.width, Math.max(34, d.height));
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        try {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+
+            Color fill;
+            if (!isEnabled()) {
+                fill = new Color(baseColor.getRed(), baseColor.getGreen(),
+                                 baseColor.getBlue(), 110);
+            } else if (getModel().isPressed()) {
+                fill = hoverColor.darker();
+            } else if (hovering) {
+                fill = hoverColor;
+            } else {
+                fill = baseColor;
+            }
+
+            g2.setColor(fill);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+
+            if (baseColor.equals(Theme.BG_CARD)) {
+                g2.setColor(Theme.BORDER_INPUT);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+            }
+        } finally {
+            g2.dispose();
+        }
+        super.paintComponent(g);
+    }
 }
