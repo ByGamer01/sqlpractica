@@ -31,4 +31,22 @@ public class EmpleadoDAO {
             throw new DAOException("No se ha podido crear el empleado: " + ex.getMessage(), ex);
         }
     }
+
+    public void update(Empleado e) throws DAOException {
+        String sql = "UPDATE empleado SET nombre = ?, apellidos = ?, email = ?, iban = ? WHERE nss = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, e.getNombre());
+            ps.setString(2, e.getApellidos());
+            ps.setString(3, e.getEmail());
+            ps.setString(4, e.getIban());
+            ps.setString(5, e.getNss());
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ningún empleado con NSS '" + e.getNss() + "'.");
+            }
+        } catch (SQLException ex) {
+            throw new DAOException("No se ha podido actualizar el empleado: " + ex.getMessage(), ex);
+        }
+    }
 }
