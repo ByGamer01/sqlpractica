@@ -51,6 +51,20 @@ public class PlazaDAO {
         }
     }
 
+    public void delete(String codigo) throws DAOException {
+        String sql = "DELETE FROM plaza WHERE codigo = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, codigo);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ninguna plaza con código '" + codigo + "'.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido eliminar la plaza: " + e.getMessage(), e);
+        }
+    }
+
     private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
         if (value == null || value.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
