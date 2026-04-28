@@ -33,4 +33,26 @@ public class NominaDAO {
             throw new DAOException("No se ha podido crear la nómina: " + e.getMessage(), e);
         }
     }
+
+    public void update(Nomina n) throws DAOException {
+        if (n.getId() == null) {
+            throw new DAOException("Para actualizar una nómina hay que indicar el ID.");
+        }
+        String sql = "UPDATE nomina SET iban_pago = ?, importe_pago = ?, " +
+                     "nss_empleado = ?, codigo_plaza = ? WHERE id = ?";
+        Connection conn = Database.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, n.getIbanPago());
+            ps.setDouble(2, n.getImportePago());
+            ps.setString(3, n.getNssEmpleado());
+            ps.setString(4, n.getCodigoPlaza());
+            ps.setInt(5, n.getId());
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("No existe ninguna nómina con ID " + n.getId() + ".");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("No se ha podido actualizar la nómina: " + e.getMessage(), e);
+        }
+    }
 }
