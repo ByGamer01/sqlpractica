@@ -1,5 +1,7 @@
 package com.sqlpractica.model;
 
+import java.util.Objects;
+
 /**
  * Representa un empleado de la empresa.
  * Campos según el diagrama: NSS (PK), Nombre, Apellidos, Email, IBAN.
@@ -37,4 +39,9 @@ public class Empleado {
 
     public String getIban() { return iban; }
     public void setIban(String iban) { this.iban = iban; }
+
+    @Override
+    public String toString() {
+        return nombre + " " + apellidos + " (" + nss + ")";
+    }
 }
