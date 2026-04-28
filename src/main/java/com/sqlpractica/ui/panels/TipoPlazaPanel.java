@@ -55,5 +55,42 @@ public class TipoPlazaPanel extends BaseCrudPanel {
         tfFuncion.setText(str(tableModel.getValueAt(rowIndex, 1)));
     }
 
+    @Override
+    protected void onCreate() {
+        if (tfNombre.getText().isBlank()) throw new RuntimeException("El campo Nombre es obligatorio.");
+        TipoPlaza t = new TipoPlaza(tfNombre.getText().trim(), tfFuncion.getText().trim());
+        wrap(() -> dao.insert(t));
+        reloadTable();
+        onClear();
+        showInfo("Tipo de plaza creado.");
+    }
+
+    @Override
+    protected void onUpdate() {
+        if (tfNombre.getText().isBlank()) throw new RuntimeException("Selecciona un tipo de plaza.");
+        TipoPlaza t = new TipoPlaza(tfNombre.getText().trim(), tfFuncion.getText().trim());
+        wrap(() -> dao.update(t));
+        reloadTable();
+        showInfo("Tipo actualizado.");
+    }
+
+    @Override
+    protected void onDelete() {
+        if (tfNombre.getText().isBlank()) throw new RuntimeException("Selecciona un tipo para eliminar.");
+        if (!confirm("¿Eliminar el tipo '" + tfNombre.getText() + "'?")) return;
+        String nombre = tfNombre.getText().trim();
+        wrap(() -> dao.delete(nombre));
+        reloadTable();
+        onClear();
+        showInfo("Tipo eliminado.");
+    }
+
+    @Override
+    protected void onClear() {
+        tfNombre.setText("");
+        tfFuncion.setText("");
+        table.clearSelection();
+    }
+
     private static String str(Object o) { return o == null ? "" : o.toString(); }
 }
