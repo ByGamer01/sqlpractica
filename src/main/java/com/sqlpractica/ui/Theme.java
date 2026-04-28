@@ -37,4 +37,13 @@ public final class Theme {
     public static final Color INFO_HOVER   = new Color(0x0284c7);
     public static final Color DANGER       = new Color(0xef4444);
     public static final Color DANGER_HOVER = new Color(0xdc2626);
+
+    public static final Font FONT_TITLE      = new Font("Segoe UI", Font.PLAIN, 20);
+    public static final Font FONT_SUBTITLE   = new Font("Segoe UI", Font.PLAIN, 11);
+    public static final Font FONT_LABEL      = new Font("Segoe UI", Font.PLAIN, 11);
+    public static final Font FONT_INPUT      = new Font("Segoe UI", Font.PLAIN, 13);
+    public static final Font FONT_BUTTON     = new Font("Segoe UI", Font.BOLD, 11);
+    public static final Font FONT_NAV        = new Font("Segoe UI", Font.BOLD, 10);
+    public static final Font FONT_TABLE      = new Font("Segoe UI", Font.PLAIN, 12);
+    public static final Font FONT_TABLE_HEAD = new Font("Segoe UI", Font.BOLD, 11);
 }
