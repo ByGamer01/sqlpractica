@@ -44,4 +44,17 @@ public class Empleado {
     public String toString() {
         return nombre + " " + apellidos + " (" + nss + ")";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Empleado)) return false;
+        Empleado e = (Empleado) o;
+        return Objects.equals(nss, e.nss);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nss);
+    }
 }
