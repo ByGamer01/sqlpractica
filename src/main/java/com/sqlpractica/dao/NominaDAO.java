@@ -69,4 +69,26 @@ public class NominaDAO {
             throw new DAOException("No se ha podido eliminar la nómina: " + e.getMessage(), e);
         }
     }
+
+    public List<Nomina> findAll() throws DAOException {
+        String sql = "SELECT id, iban_pago, importe_pago, nss_empleado, codigo_plaza " +
+                     "FROM nomina ORDER BY id DESC";
+        Connection conn = Database.getConnection();
+        List<Nomina> resultado = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resultado.add(new Nomina(
+                        rs.getInt("id"),
+                        rs.getString("iban_pago"),
+                        rs.getDouble("importe_pago"),
+                        rs.getString("nss_empleado"),
+                        rs.getString("codigo_plaza")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error leyendo las nóminas: " + e.getMessage(), e);
+        }
+        return resultado;
+    }
 }
