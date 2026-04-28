@@ -125,4 +125,45 @@ public abstract class BaseCrudPanel extends JPanel {
         formPanel.add(Box.createVerticalStrut(4));
         formPanel.add(buttons);
     }
+
+    /**
+     * Envuelve una acción en try/catch para que cualquier DAOException
+     * o error inesperado acabe como mensaje al usuario, no como stack trace.
+     */
+    protected void safe(Runnable action) {
+        try {
+            action.run();
+        } catch (RuntimeException ex) {
+            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+            showError(cause.getMessage());
+        }
+    }
+
+    protected void showError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    protected void showInfo(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Información", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    protected boolean confirm(String msg) {
+        int r = JOptionPane.showConfirmDialog(this, msg, "Confirmación",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        return r == JOptionPane.YES_OPTION;
+    }
+
+    /** Helper: convierte DAOException en RuntimeException para usar dentro de safe(). */
+    protected static void wrap(DaoAction action) {
+        try {
+            action.run();
+        } catch (DAOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @FunctionalInterface
+    protected interface DaoAction {
+        void run() throws DAOException;
+    }
 }
