@@ -87,3 +87,25 @@ src/main/java/com/sqlpractica/
 - **CardLayout** para cambiar entre las cinco pantallas sin recrearlas cada vez.
 - **Validación en el formulario** antes de enviar nada al DAO (campos obligatorios,
   formatos numéricos, formato de fecha ISO).
+
+
+Sugerencia de estructura para tu documento
+Como vas a redactarlo con tus palabras, te dejo un esqueleto que encaja con los puntos que ya ha quedado todo demostrado:
+
+Portada — tu nombre, título, fecha
+Objectiu — qué pide el enunciado, qué entidades hay
+Esquema relacional — pega el diagrama del enunciado y comenta las cardinalidades
+Decisions de disseny — aquí tienes mucho que contar:
+
+Por qué una app estilo móvil con navegación central (diferencia con el ejemplo del PDF)
+Patrón DAO y separación en capas
+PreparedStatement en lugar de Statement (seguridad)
+Excepción DAOException propia
+PRAGMA foreign_keys = ON
+Estrategia ON DELETE para cada FK (CASCADE / SET NULL / RESTRICT)
+
+
+Estructura de paquetes — captura del árbol del proyecto
+Pantalles de l'aplicació — usa las screenshots 01-05 con un párrafo cada una explicando qué se ve
+Gestió d'errors — usa 07-confirm-delete.png y 08-validation-error.png para mostrar las dos capas (validación de formulario + confirmación destructiva)
+Conclusions — qué has aprendido, dificultades, posibles mejoras (ej: usar JComboBox para FKs en vez de campos de texto)
