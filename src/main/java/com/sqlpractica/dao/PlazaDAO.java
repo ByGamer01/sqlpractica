@@ -1,7 +1,7 @@
 package com.sqlpractica.dao;
 
-import com.sqlpractica.db.Database;
-import com.sqlpractica.exception.DAOException;
+import com.sqlpractica.DAOException;
+import com.sqlpractica.Database;
 import com.sqlpractica.model.Plaza;
 
 import java.sql.Connection;
@@ -12,52 +12,61 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO de la tabla 'plaza'.
+ *
+ * NOVEDAD respecto a EmpleadoDAO: dos columnas pueden ser NULL
+ * (codigo_plaza_supervisora e informe_supervision). Por eso usamos
+ * el helper asignarTextoOpcional(): si el campo viene vacío, en vez
+ * de meter "" en la BD, mete NULL de verdad con ps.setNull(...).
+ */
 public class PlazaDAO {
 
-    public void insert(Plaza p) throws DAOException {
+    public void insertar(Plaza p) throws DAOException {
         String sql = "INSERT INTO plaza(codigo, nombre, salario, codigo_plaza_supervisora, " +
                      "informe_supervision, nombre_tipo_plaza) VALUES (?, ?, ?, ?, ?, ?)";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, p.getCodigo());
-            ps.setString(2, p.getNombre());
-            ps.setDouble(3, p.getSalario());
-            setNullableString(ps, 4, p.getCodigoPlazaSupervisora());
-            setNullableString(ps, 5, p.getInformeSupervision());
-            ps.setString(6, p.getNombreTipoPlaza());
+            ps.setString(1, p.obtenerCodigo());
+            ps.setString(2, p.obtenerNombre());
+            ps.setDouble(3, p.obtenerSalario());
+            asignarTextoOpcional(ps, 4, p.obtenerCodigoPlazaSupervisora());
+            asignarTextoOpcional(ps, 5, p.obtenerInformeSupervision());
+            ps.setString(6, p.obtenerNombreTipoPlaza());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("No se ha podido crear la plaza: " + e.getMessage(), e);
         }
     }
 
-    public void update(Plaza p) throws DAOException {
+    public void actualizar(Plaza p) throws DAOException {
+        // No tocamos la PK 'codigo' (va en el WHERE), sí cambian el resto.
         String sql = "UPDATE plaza SET nombre = ?, salario = ?, codigo_plaza_supervisora = ?, " +
                      "informe_supervision = ?, nombre_tipo_plaza = ? WHERE codigo = ?";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, p.getNombre());
-            ps.setDouble(2, p.getSalario());
-            setNullableString(ps, 3, p.getCodigoPlazaSupervisora());
-            setNullableString(ps, 4, p.getInformeSupervision());
-            ps.setString(5, p.getNombreTipoPlaza());
-            ps.setString(6, p.getCodigo());
-            int rows = ps.executeUpdate();
-            if (rows == 0) {
-                throw new DAOException("No existe ninguna plaza con código '" + p.getCodigo() + "'.");
+            ps.setString(1, p.obtenerNombre());
+            ps.setDouble(2, p.obtenerSalario());
+            asignarTextoOpcional(ps, 3, p.obtenerCodigoPlazaSupervisora());
+            asignarTextoOpcional(ps, 4, p.obtenerInformeSupervision());
+            ps.setString(5, p.obtenerNombreTipoPlaza());
+            ps.setString(6, p.obtenerCodigo());
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+                throw new DAOException("No existe ninguna plaza con código '" + p.obtenerCodigo() + "'.");
             }
         } catch (SQLException e) {
             throw new DAOException("No se ha podido actualizar la plaza: " + e.getMessage(), e);
         }
     }
 
-    public void delete(String codigo) throws DAOException {
+    public void eliminar(String codigo) throws DAOException {
         String sql = "DELETE FROM plaza WHERE codigo = ?";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, codigo);
-            int rows = ps.executeUpdate();
-            if (rows == 0) {
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
                 throw new DAOException("No existe ninguna plaza con código '" + codigo + "'.");
             }
         } catch (SQLException e) {
@@ -65,14 +74,16 @@ public class PlazaDAO {
         }
     }
 
-    public List<Plaza> findAll() throws DAOException {
+    public List<Plaza> obtenerTodos() throws DAOException {
         String sql = "SELECT codigo, nombre, salario, codigo_plaza_supervisora, " +
                      "informe_supervision, nombre_tipo_plaza FROM plaza ORDER BY codigo";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         List<Plaza> resultado = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
+                // rs.getString devuelve null si la celda es NULL, así
+                // que se mapea limpio al objeto Plaza.
                 resultado.add(new Plaza(
                         rs.getString("codigo"),
                         rs.getString("nombre"),
@@ -88,11 +99,17 @@ public class PlazaDAO {
         return resultado;
     }
 
-    private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
-        if (value == null || value.isBlank()) {
+    /**
+     * Si el valor está vacío o es null, asignamos NULL en SQL.
+     * Si no, lo asignamos como texto normal.
+     * Esto evita que se guarden cadenas "" donde semánticamente
+     * queremos NULL (p.ej. "esta plaza no tiene supervisora").
+     */
+    private void asignarTextoOpcional(PreparedStatement ps, int idx, String valor) throws SQLException {
+        if (valor == null || valor.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
         } else {
-            ps.setString(idx, value);
+            ps.setString(idx, valor);
         }
     }
 }
