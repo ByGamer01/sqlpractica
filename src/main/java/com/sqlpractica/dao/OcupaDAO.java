@@ -1,7 +1,7 @@
 package com.sqlpractica.dao;
 
-import com.sqlpractica.db.Database;
-import com.sqlpractica.exception.DAOException;
+import com.sqlpractica.DAOException;
+import com.sqlpractica.Database;
 import com.sqlpractica.model.Ocupa;
 
 import java.sql.Connection;
@@ -12,32 +12,44 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO de la tabla 'ocupa' (relación N:M empleado-plaza).
+ *
+ * IMPORTANTE: la PK es COMPUESTA, así que para identificar una fila
+ * (en update y delete) necesitamos las DOS claves: nss_empleado y
+ * codigo_plaza.
+ */
 public class OcupaDAO {
 
-    public void insert(Ocupa o) throws DAOException {
+    public void insertar(Ocupa o) throws DAOException {
         String sql = "INSERT INTO ocupa(nss_empleado, codigo_plaza, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, o.getNssEmpleado());
-            ps.setString(2, o.getCodigoPlaza());
-            ps.setString(3, o.getFechaInicio());
-            setNullableString(ps, 4, o.getFechaFin());
+            ps.setString(1, o.obtenerNssEmpleado());
+            ps.setString(2, o.obtenerCodigoPlaza());
+            ps.setString(3, o.obtenerFechaInicio());
+            // fecha_fin es opcional -> puede ir como NULL.
+            asignarTextoOpcional(ps, 4, o.obtenerFechaFin());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("No se ha podido crear la ocupación: " + e.getMessage(), e);
         }
     }
 
-    public void update(Ocupa o) throws DAOException {
+    /**
+     * Solo se pueden cambiar las fechas; las claves (NSS y codigo_plaza)
+     * van en el WHERE para localizar la fila.
+     */
+    public void actualizar(Ocupa o) throws DAOException {
         String sql = "UPDATE ocupa SET fecha_inicio = ?, fecha_fin = ? WHERE nss_empleado = ? AND codigo_plaza = ?";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, o.getFechaInicio());
-            setNullableString(ps, 2, o.getFechaFin());
-            ps.setString(3, o.getNssEmpleado());
-            ps.setString(4, o.getCodigoPlaza());
-            int rows = ps.executeUpdate();
-            if (rows == 0) {
+            ps.setString(1, o.obtenerFechaInicio());
+            asignarTextoOpcional(ps, 2, o.obtenerFechaFin());
+            ps.setString(3, o.obtenerNssEmpleado());
+            ps.setString(4, o.obtenerCodigoPlaza());
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
                 throw new DAOException("No existe ninguna ocupación para este empleado y plaza.");
             }
         } catch (SQLException e) {
@@ -45,25 +57,29 @@ public class OcupaDAO {
         }
     }
 
-    public void delete(String nssEmpleado, String codigoPlaza) throws DAOException {
+    /**
+     * eliminar recibe LAS DOS partes de la clave compuesta.
+     */
+    public void eliminar(String nssEmpleado, String codigoPlaza) throws DAOException {
         String sql = "DELETE FROM ocupa WHERE nss_empleado = ? AND codigo_plaza = ?";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, nssEmpleado);
             ps.setString(2, codigoPlaza);
-            int rows = ps.executeUpdate();
-            if (rows == 0) {
-                throw new DAOException("No existe ninguna ocupación con esta combinación.");
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+                throw new DAOException("No existe ninguna ocupación con esa combinación.");
             }
         } catch (SQLException e) {
             throw new DAOException("No se ha podido eliminar la ocupación: " + e.getMessage(), e);
         }
     }
 
-    public List<Ocupa> findAll() throws DAOException {
+    public List<Ocupa> obtenerTodos() throws DAOException {
+        // Ordenamos por fecha_inicio descendente: las más recientes arriba.
         String sql = "SELECT nss_empleado, codigo_plaza, fecha_inicio, fecha_fin FROM ocupa " +
                      "ORDER BY fecha_inicio DESC";
-        Connection conn = Database.getConnection();
+        Connection conn = Database.obtenerConexion();
         List<Ocupa> resultado = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -81,11 +97,11 @@ public class OcupaDAO {
         return resultado;
     }
 
-    private void setNullableString(PreparedStatement ps, int idx, String value) throws SQLException {
-        if (value == null || value.isBlank()) {
+    private void asignarTextoOpcional(PreparedStatement ps, int idx, String valor) throws SQLException {
+        if (valor == null || valor.isBlank()) {
             ps.setNull(idx, Types.VARCHAR);
         } else {
-            ps.setString(idx, value);
+            ps.setString(idx, valor);
         }
     }
 }
