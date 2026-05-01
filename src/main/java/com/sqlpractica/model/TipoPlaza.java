@@ -3,12 +3,17 @@ package com.sqlpractica.model;
 import java.util.Objects;
 
 /**
- * Tipo de plaza (categoría laboral): nombre (PK) y función.
+ * Modelo de la tabla 'tipo_plaza'.
+ *
+ * LÓGICA:
+ *   - Catálogo de categorías laborales (p.ej. "Conserje", "Profesor").
+ *   - PK = nombre. Es la tabla a la que apunta plaza.nombre_tipo_plaza.
+ *   - POJO simple: atributos + obtener/asignar.
  */
 public class TipoPlaza {
 
-    private String nombre;
-    private String funcion;
+    private String nombre;   // PK
+    private String funcion;  // descripción del trabajo
 
     public TipoPlaza() {
     }
@@ -18,23 +23,18 @@ public class TipoPlaza {
         this.funcion = funcion;
     }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String obtenerNombre() { return nombre; }
+    public void asignarNombre(String nombre) { this.nombre = nombre; }
 
-    public String getFuncion() { return funcion; }
-    public void setFuncion(String funcion) { this.funcion = funcion; }
+    public String obtenerFuncion() { return funcion; }
+    public void asignarFuncion(String funcion) { this.funcion = funcion; }
 
-    @Override
-    public String toString() {
-        return nombre;
-    }
-
+    // Igualdad por la PK (nombre).
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TipoPlaza)) return false;
-        TipoPlaza t = (TipoPlaza) o;
-        return Objects.equals(nombre, t.nombre);
+        return Objects.equals(nombre, ((TipoPlaza) o).nombre);
     }
 
     @Override
