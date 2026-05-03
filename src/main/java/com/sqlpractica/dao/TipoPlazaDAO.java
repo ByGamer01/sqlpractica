@@ -1,15 +1,15 @@
 package com.sqlpractica.dao;
 
-import com.sqlpractica.DAOException;
-import com.sqlpractica.Database;
-import com.sqlpractica.model.TipoPlaza;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sqlpractica.DAOException;
+import com.sqlpractica.Database;
+import com.sqlpractica.model.TipoPlaza;
 
 /**
  * DAO de la tabla 'tipo_plaza'. Misma idea que EmpleadoDAO pero
@@ -25,8 +25,8 @@ public class TipoPlazaDAO {
         String sql = "INSERT INTO tipo_plaza(nombre, funcion) VALUES (?, ?)";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, t.obtenerNombre());
-            ps.setString(2, t.obtenerFuncion());
+            ps.setString(1, t.getNombre());
+            ps.setString(2, t.getFuncion());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("No se ha podido crear el tipo de plaza: " + e.getMessage(), e);
@@ -41,11 +41,11 @@ public class TipoPlazaDAO {
         String sql = "UPDATE tipo_plaza SET funcion = ? WHERE nombre = ?";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, t.obtenerFuncion());
-            ps.setString(2, t.obtenerNombre());
+            ps.setString(1, t.getFuncion());
+            ps.setString(2, t.getNombre());
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ningún tipo de plaza con nombre '" + t.obtenerNombre() + "'.");
+                throw new DAOException("No existe ningún tipo de plaza con nombre '" + t.getNombre() + "'.");
             }
         } catch (SQLException e) {
             throw new DAOException("No se ha podido actualizar el tipo de plaza: " + e.getMessage(), e);

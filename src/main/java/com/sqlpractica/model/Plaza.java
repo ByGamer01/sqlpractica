@@ -51,7 +51,7 @@ public class Plaza {
     public String getNombreTipoPlaza() { return nombreTipoPlaza; }
     public void setNombreTipoPlaza(String nombreTipoPlaza) { this.nombreTipoPlaza = nombreTipoPlaza; }
 
-    // Igualdad por la PK (codigo)
+    // Igualdad por la PK (codigo).
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

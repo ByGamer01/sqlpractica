@@ -1,15 +1,15 @@
 package com.sqlpractica.dao;
 
-import com.sqlpractica.DAOException;
-import com.sqlpractica.Database;
-import com.sqlpractica.model.Empleado;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sqlpractica.DAOException;
+import com.sqlpractica.Database;
+import com.sqlpractica.model.Empleado;
 
 /**
  * DAO (Data Access Object) de la tabla 'empleado'.
@@ -39,11 +39,11 @@ public class EmpleadoDAO {
         String sql = "INSERT INTO empleado(nss, nombre, apellidos, email, iban) VALUES (?, ?, ?, ?, ?)";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, e.obtenerNss());
-            ps.setString(2, e.obtenerNombre());
-            ps.setString(3, e.obtenerApellidos());
-            ps.setString(4, e.obtenerEmail());
-            ps.setString(5, e.obtenerIban());
+            ps.setString(1, e.getNss());
+            ps.setString(2, e.getNombre());
+            ps.setString(3, e.getApellidos());
+            ps.setString(4, e.getEmail());
+            ps.setString(5, e.getIban());
             ps.executeUpdate();
         } catch (SQLException ex) {
             throw new DAOException("No se ha podido crear el empleado: " + ex.getMessage(), ex);
@@ -59,14 +59,14 @@ public class EmpleadoDAO {
         String sql = "UPDATE empleado SET nombre = ?, apellidos = ?, email = ?, iban = ? WHERE nss = ?";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, e.obtenerNombre());
-            ps.setString(2, e.obtenerApellidos());
-            ps.setString(3, e.obtenerEmail());
-            ps.setString(4, e.obtenerIban());
-            ps.setString(5, e.obtenerNss());
+            ps.setString(1, e.getNombre());
+            ps.setString(2, e.getApellidos());
+            ps.setString(3, e.getEmail());
+            ps.setString(4, e.getIban());
+            ps.setString(5, e.getNss());
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ningún empleado con NSS '" + e.obtenerNss() + "'.");
+                throw new DAOException("No existe ningún empleado con NSS '" + e.getNss() + "'.");
             }
         } catch (SQLException ex) {
             throw new DAOException("No se ha podido actualizar el empleado: " + ex.getMessage(), ex);

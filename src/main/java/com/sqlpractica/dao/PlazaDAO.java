@@ -1,9 +1,5 @@
 package com.sqlpractica.dao;
 
-import com.sqlpractica.DAOException;
-import com.sqlpractica.Database;
-import com.sqlpractica.model.Plaza;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sqlpractica.DAOException;
+import com.sqlpractica.Database;
+import com.sqlpractica.model.Plaza;
 
 /**
  * DAO de la tabla 'plaza'.
@@ -27,12 +27,12 @@ public class PlazaDAO {
                      "informe_supervision, nombre_tipo_plaza) VALUES (?, ?, ?, ?, ?, ?)";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, p.obtenerCodigo());
-            ps.setString(2, p.obtenerNombre());
-            ps.setDouble(3, p.obtenerSalario());
-            asignarTextoOpcional(ps, 4, p.obtenerCodigoPlazaSupervisora());
-            asignarTextoOpcional(ps, 5, p.obtenerInformeSupervision());
-            ps.setString(6, p.obtenerNombreTipoPlaza());
+            ps.setString(1, p.getCodigo());
+            ps.setString(2, p.getNombre());
+            ps.setDouble(3, p.getSalario());
+            asignarTextoOpcional(ps, 4, p.getCodigoPlazaSupervisora());
+            asignarTextoOpcional(ps, 5, p.getInformeSupervision());
+            ps.setString(6, p.getNombreTipoPlaza());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("No se ha podido crear la plaza: " + e.getMessage(), e);
@@ -45,15 +45,15 @@ public class PlazaDAO {
                      "informe_supervision = ?, nombre_tipo_plaza = ? WHERE codigo = ?";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, p.obtenerNombre());
-            ps.setDouble(2, p.obtenerSalario());
-            asignarTextoOpcional(ps, 3, p.obtenerCodigoPlazaSupervisora());
-            asignarTextoOpcional(ps, 4, p.obtenerInformeSupervision());
-            ps.setString(5, p.obtenerNombreTipoPlaza());
-            ps.setString(6, p.obtenerCodigo());
+            ps.setString(1, p.getNombre());
+            ps.setDouble(2, p.getSalario());
+            asignarTextoOpcional(ps, 3, p.getCodigoPlazaSupervisora());
+            asignarTextoOpcional(ps, 4, p.getInformeSupervision());
+            ps.setString(5, p.getNombreTipoPlaza());
+            ps.setString(6, p.getCodigo());
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ninguna plaza con código '" + p.obtenerCodigo() + "'.");
+                throw new DAOException("No existe ninguna plaza con código '" + p.getCodigo() + "'.");
             }
         } catch (SQLException e) {
             throw new DAOException("No se ha podido actualizar la plaza: " + e.getMessage(), e);

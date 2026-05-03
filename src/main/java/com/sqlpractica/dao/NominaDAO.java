@@ -1,9 +1,5 @@
 package com.sqlpractica.dao;
 
-import com.sqlpractica.DAOException;
-import com.sqlpractica.Database;
-import com.sqlpractica.model.Nomina;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sqlpractica.DAOException;
+import com.sqlpractica.Database;
+import com.sqlpractica.model.Nomina;
 
 /**
  * DAO de la tabla 'nomina'.
@@ -32,16 +32,16 @@ public class NominaDAO {
         Connection conn = Database.obtenerConexion();
         // Pedimos a JDBC que recuerde la clave que SQLite va a generar.
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, n.obtenerIbanPago());
-            ps.setDouble(2, n.obtenerImportePago());
-            ps.setString(3, n.obtenerNssEmpleado());
-            ps.setString(4, n.obtenerCodigoPlaza());
+            ps.setString(1, n.getIbanPago());
+            ps.setDouble(2, n.getImportePago());
+            ps.setString(3, n.getNssEmpleado());
+            ps.setString(4, n.getCodigoPlaza());
             ps.executeUpdate();
 
             // Recogemos el id generado y lo guardamos en el objeto.
             try (ResultSet claves = ps.getGeneratedKeys()) {
                 if (claves.next()) {
-                    n.asignarId(claves.getInt(1));
+                    n.setId(claves.getInt(1));
                 }
             }
         } catch (SQLException e) {
@@ -54,21 +54,21 @@ public class NominaDAO {
      * Si llega null lo tratamos como error de programación.
      */
     public void actualizar(Nomina n) throws DAOException {
-        if (n.obtenerId() == null) {
+        if (n.getId() == null) {
             throw new DAOException("Para actualizar una nómina hay que indicar el ID.");
         }
         String sql = "UPDATE nomina SET iban_pago = ?, importe_pago = ?, " +
                      "nss_empleado = ?, codigo_plaza = ? WHERE id = ?";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, n.obtenerIbanPago());
-            ps.setDouble(2, n.obtenerImportePago());
-            ps.setString(3, n.obtenerNssEmpleado());
-            ps.setString(4, n.obtenerCodigoPlaza());
-            ps.setInt(5, n.obtenerId());
+            ps.setString(1, n.getIbanPago());
+            ps.setDouble(2, n.getImportePago());
+            ps.setString(3, n.getNssEmpleado());
+            ps.setString(4, n.getCodigoPlaza());
+            ps.setInt(5, n.getId());
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ninguna nómina con ID " + n.obtenerId() + ".");
+                throw new DAOException("No existe ninguna nómina con ID " + n.getId() + ".");
             }
         } catch (SQLException e) {
             throw new DAOException("No se ha podido actualizar la nómina: " + e.getMessage(), e);
