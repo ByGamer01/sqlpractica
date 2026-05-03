@@ -8,7 +8,7 @@ package com.sqlpractica;
  *   - Si dejásemos pasar SQLException tal cual, la capa de UI tendría
  *     que importar java.sql y conocer detalles de la base de datos.
  *   - Por eso, cada DAO captura SQLException y lanza una DAOException
- *     con un mensaje legible. La UI solo tiene que mostrar getMessage().
+ *     con un mensaje. La UI solo tiene que mostrar getMessage().
  *
  * Hereda de Exception (es "checked"): el compilador obliga a tratarla
  * con try/catch o a propagarla con "throws".

@@ -27,7 +27,7 @@ public class AppFrame extends JFrame {
 
     public AppFrame() {
         // Título de la ventana.
-        super("Programación con bases de datos");
+        super("Programación con base de datos");
 
         // Cuando el usuario cierra la X, la JVM termina (y se ejecuta
         // el shutdown hook de Main que cierra la conexión).

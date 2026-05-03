@@ -24,12 +24,7 @@ public class Plaza {
     public Plaza() {
     }
 
-    public Plaza(String codigo,
-                 String nombre,
-                 double salario,
-                 String codigoPlazaSupervisora,
-                 String informeSupervision,
-                 String nombreTipoPlaza) {
+    public Plaza(String codigo, String nombre, double salario, String codigoPlazaSupervisora, String informeSupervision, String nombreTipoPlaza) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.salario = salario;
@@ -38,35 +33,30 @@ public class Plaza {
         this.nombreTipoPlaza = nombreTipoPlaza;
     }
 
-    public String obtenerCodigo() { return codigo; }
-    public void asignarCodigo(String codigo) { this.codigo = codigo; }
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
 
-    public String obtenerNombre() { return nombre; }
-    public void asignarNombre(String nombre) { this.nombre = nombre; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public double obtenerSalario() { return salario; }
-    public void asignarSalario(double salario) { this.salario = salario; }
+    public double getSalario() { return salario; }
+    public void setSalario(double salario) { this.salario = salario; }
 
-    public String obtenerCodigoPlazaSupervisora() { return codigoPlazaSupervisora; }
-    public void asignarCodigoPlazaSupervisora(String codigoPlazaSupervisora) {
-        this.codigoPlazaSupervisora = codigoPlazaSupervisora;
-    }
+    public String getCodigoPlazaSupervisora() { return codigoPlazaSupervisora; }
+    public void setCodigoPlazaSupervisora(String codigoPlazaSupervisora) { this.codigoPlazaSupervisora = codigoPlazaSupervisora;}
 
-    public String obtenerInformeSupervision() { return informeSupervision; }
-    public void asignarInformeSupervision(String informeSupervision) {
-        this.informeSupervision = informeSupervision;
-    }
+    public String getInformeSupervision() { return informeSupervision; }
+    public void setInformeSupervision(String informeSupervision) {this.informeSupervision = informeSupervision;}
 
-    public String obtenerNombreTipoPlaza() { return nombreTipoPlaza; }
-    public void asignarNombreTipoPlaza(String nombreTipoPlaza) {
-        this.nombreTipoPlaza = nombreTipoPlaza;
-    }
+    public String getNombreTipoPlaza() { return nombreTipoPlaza; }
+    public void setNombreTipoPlaza(String nombreTipoPlaza) { this.nombreTipoPlaza = nombreTipoPlaza; }
 
-    // Igualdad por la PK (codigo).
+    // Igualdad por la PK (codigo)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Plaza)) return false;
+
         return Objects.equals(codigo, ((Plaza) o).codigo);
     }
 

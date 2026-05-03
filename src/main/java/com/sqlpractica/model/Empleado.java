@@ -24,13 +24,8 @@ public class Empleado {
     private String email;
     private String iban;
 
-    // Constructor vacío: útil si en algún momento queremos crear el
-    // objeto y rellenarlo después con los métodos asignar*.
-    public Empleado() {
-    }
-
     // Constructor con todos los campos: el que usamos al leer filas
-    // de la BD o al crear un empleado nuevo desde el formulario.
+    // de la BD o al crear un empleado nuevo desde el formulario
     public Empleado(String nss, String nombre, String apellidos, String email, String iban) {
         this.nss = nss;
         this.nombre = nombre;
@@ -39,21 +34,21 @@ public class Empleado {
         this.iban = iban;
     }
 
-    // Métodos "obtener" (getters) y "asignar" (setters) en español.
-    public String obtenerNss() { return nss; }
-    public void asignarNss(String nss) { this.nss = nss; }
+    // getters y setters
+    public String getNss() { return nss; }
+    public void setNss(String nss) { this.nss = nss; }
 
-    public String obtenerNombre() { return nombre; }
-    public void asignarNombre(String nombre) { this.nombre = nombre; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String obtenerApellidos() { return apellidos; }
-    public void asignarApellidos(String apellidos) { this.apellidos = apellidos; }
+    public String getApellidos() { return apellidos; }
+    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
 
-    public String obtenerEmail() { return email; }
-    public void asignarEmail(String email) { this.email = email; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String obtenerIban() { return iban; }
-    public void asignarIban(String iban) { this.iban = iban; }
+    public String getIban() { return iban; }
+    public void setIban(String iban) { this.iban = iban; }
 
     // equals + hashCode usan el NSS porque es la clave primaria:
     // dos empleados con el mismo NSS son el mismo empleado.
@@ -61,6 +56,7 @@ public class Empleado {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Empleado)) return false;
+
         return Objects.equals(nss, ((Empleado) o).nss);
     }
 
