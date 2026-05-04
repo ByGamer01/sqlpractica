@@ -102,11 +102,11 @@ public class OcupaPanel extends JPanel {
             modelo.setRowCount(0);
             List<Ocupa> lista = dao.obtenerTodos();
             for (Ocupa o : lista) {
-                String fin = o.obtenerFechaFin();
+                String fin = o.getFechaFin();
                 modelo.addRow(new Object[] {
-                        o.obtenerNssEmpleado(),
-                        o.obtenerCodigoPlaza(),
-                        o.obtenerFechaInicio(),
+                        o.getNssEmpleado(),
+                        o.getCodigoPlaza(),
+                        o.getFechaInicio(),
                         fin == null ? "" : fin
                 });
             }

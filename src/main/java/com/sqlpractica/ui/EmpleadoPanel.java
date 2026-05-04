@@ -22,36 +22,44 @@ import com.sqlpractica.model.Empleado;
  * Panel CRUD para empleados.
  *
  * ESTRUCTURA VISUAL (BorderLayout):
- *   - CENTER: tabla con la lista de empleados (dentro de un JScrollPane).
- *   - SOUTH:  formulario con etiquetas y campos de texto + botones.
+ *   - CENTER: tabla con la lista de empleados (dentro de un JScrollPane)
+ *   - SOUTH:  formulario con etiquetas y campos de texto + botones
  *
  * LÓGICA / FLUJO:
- *   1. El constructor monta la UI y llama a recargar() para llenar la tabla.
+ *   1. El constructor monta la UI y llama a recargar() para llenar la tabla
  *   2. recargar() pide al DAO la lista de empleados y la mete en el modelo
- *      de la tabla (DefaultTableModel).
+ *      de la tabla (DefaultTableModel)
  *   3. Cuando el usuario clica una fila, cargarSeleccion() copia los datos
- *      de esa fila a los JTextField del formulario.
+ *      de esa fila a los JTextField del formulario
  *   4. Los botones llaman a crear / editar / eliminar / limpiar:
  *        - crear():    valida el formulario, lo convierte en Empleado y
- *                      llama a dao.insertar(...).
- *        - editar():   ídem pero con dao.actualizar(...).
+ *                      llama a dao.insertar(...)
+ *        - editar():   ídem pero con dao.actualizar(...)
  *        - eliminar(): pide confirmación al usuario y llama a dao.eliminar(...).
- *        - limpiar():  vacía los campos y deselecciona la tabla.
- *   5. Si cualquier llamada al DAO falla, muestra un diálogo de error.
+ *        - limpiar():  vacía los campos y deselecciona la tabla
+ *   5. Si cualquier llamada al DAO falla, muestra un diálogo de error
  *
  * Doc JTable + DefaultTableModel:
  *   https://docs.oracle.com/javase/tutorial/uiswing/components/table.html
  */
 public class EmpleadoPanel extends JPanel {
 
-    // El DAO que hablará con la base de datos.
+    // El DAO que hablará con la base de datos
     private final EmpleadoDAO dao = new EmpleadoDAO();
 
-    // Modelo de la tabla: define las columnas y guarda las filas.
+    // Modelo de la tabla: define las columnas y guarda las filas
     // isCellEditable = false -> el usuario NO puede editar la tabla
-    // directamente; solo a través del formulario.
-    private final DefaultTableModel modelo = new DefaultTableModel(
-            new String[] {"NSS", "Nombre", "Apellidos", "Email", "IBAN"}, 0) {
+    // directamente; solo a través del formulario
+    private final DefaultTableModel modelo = new DefaultTableModel( 
+        new String[] {
+            "NSS",
+            "Nombre",
+            "Apellidos",
+            "Email",
+            "IBAN"
+        },
+        0
+    ) {
         @Override
         public boolean isCellEditable(int fila, int columna) {
             return false;
@@ -137,13 +145,14 @@ public class EmpleadoPanel extends JPanel {
             modelo.setRowCount(0);
             List<Empleado> lista = dao.obtenerTodos();
             for (Empleado e : lista) {
+
                 // addRow añade una fila al final de la tabla.
                 modelo.addRow(new Object[] {
-                        e.obtenerNss(),
-                        e.obtenerNombre(),
-                        e.obtenerApellidos(),
-                        e.obtenerEmail(),
-                        e.obtenerIban()
+                    e.getNss(),
+                    e.getNombre(),
+                    e.getApellidos(),
+                    e.getEmail(),
+                    e.getIban()
                 });
             }
         } catch (DAOException ex) {

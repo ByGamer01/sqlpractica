@@ -105,15 +105,16 @@ public class PlazaPanel extends JPanel {
             for (Plaza p : lista) {
                 // Si supervisora o informe son null, mostramos "" en la
                 // tabla en vez de la palabra "null".
-                String supervisora = p.obtenerCodigoPlazaSupervisora();
-                String informe = p.obtenerInformeSupervision();
+                String supervisora = p.getCodigoPlazaSupervisora();
+                String informe = p.getInformeSupervision();
+
                 modelo.addRow(new Object[] {
-                        p.obtenerCodigo(),
-                        p.obtenerNombre(),
-                        p.obtenerSalario(),
-                        supervisora == null ? "" : supervisora,
-                        informe == null ? "" : informe,
-                        p.obtenerNombreTipoPlaza()
+                    p.getCodigo(),
+                    p.getNombre(),
+                    p.getSalario(),
+                    supervisora == null ? "" : supervisora,
+                    informe == null ? "" : informe,
+                    p.getNombreTipoPlaza()
                 });
             }
         } catch (DAOException ex) {

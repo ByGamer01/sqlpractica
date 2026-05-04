@@ -33,7 +33,15 @@ public class NominaPanel extends JPanel {
     private final NominaDAO dao = new NominaDAO();
 
     private final DefaultTableModel modelo = new DefaultTableModel(
-            new String[] {"ID", "IBAN pago", "Importe", "NSS empleado", "Código plaza"}, 0) {
+        new String[] {
+            "ID",
+            "IBAN pago",
+            "Importe",
+            "NSS empleado",
+            "Código plaza"
+        },
+        0
+    ) {
         @Override
         public boolean isCellEditable(int fila, int columna) {
             return false;
@@ -102,11 +110,11 @@ public class NominaPanel extends JPanel {
             List<Nomina> lista = dao.obtenerTodos();
             for (Nomina n : lista) {
                 modelo.addRow(new Object[] {
-                        n.obtenerId(),
-                        n.obtenerIbanPago(),
-                        n.obtenerImportePago(),
-                        n.obtenerNssEmpleado(),
-                        n.obtenerCodigoPlaza()
+                        n.getId(),
+                        n.getIbanPago(),
+                        n.getImportePago(),
+                        n.getNssEmpleado(),
+                        n.getCodigoPlaza()
                 });
             }
         } catch (DAOException ex) {
