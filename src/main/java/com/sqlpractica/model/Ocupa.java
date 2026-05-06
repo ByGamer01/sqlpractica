@@ -3,22 +3,22 @@ package com.sqlpractica.model;
 import java.util.Objects;
 
 /**
- * Modelo de la tabla 'ocupa' (relación N:M entre empleado y plaza).
+ * Modelo de la tabla 'ocupa' (relación N:M entre empleado y plaza)
  *
  * LÓGICA:
- *   - Indica QUÉ empleado ocupa QUÉ plaza, y en qué fechas.
+ *   - Indica QUÉ empleado ocupa QUÉ plaza, y en qué fechas
  *   - PK COMPUESTA: (nssEmpleado, codigoPlaza). Ningún empleado puede
- *     ocupar la misma plaza dos veces a la vez.
- *   - fechaInicio obligatoria, fechaFin opcional (null = sigue ocupándola).
+ *     ocupar la misma plaza dos veces a la vez
+ *   - fechaInicio obligatoria, fechaFin opcional (null = sigue ocupándola)
  *   - Las fechas se guardan como TEXT en SQLite con formato yyyy-MM-dd
- *     (lo más portable; la validación se hace en la UI con LocalDate.parse).
+ *     (lo más portable; la validación se hace en la UI con LocalDate.parse)
  */
 public class Ocupa {
 
     private String nssEmpleado;   // FK a empleado (parte de la PK)
     private String codigoPlaza;   // FK a plaza   (parte de la PK)
     private String fechaInicio;   // yyyy-MM-dd
-    private String fechaFin;      // yyyy-MM-dd o null 
+    private String fechaFin;      // yyyy-MM-dd o null, es opcional
 
     public Ocupa(String nssEmpleado, String codigoPlaza, String fechaInicio, String fechaFin) {
         this.nssEmpleado = nssEmpleado;
@@ -39,7 +39,7 @@ public class Ocupa {
     public String getFechaFin() { return fechaFin; }
     public void setFechaFin(String fechaFin) { this.fechaFin = fechaFin; }
 
-    // La PK es compuesta -> usamos las DOS columnas en equals/hashCode.
+    // La PK es compuesta -> usamos las DOS columnas en equals y hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

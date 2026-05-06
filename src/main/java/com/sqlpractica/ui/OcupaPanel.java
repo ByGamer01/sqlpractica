@@ -157,14 +157,14 @@ public class OcupaPanel extends JPanel {
 
     /**
      * Comprueba que el texto sea una fecha válida en formato ISO
-     * (yyyy-MM-dd). Si no lo es, LocalDate.parse lanza una excepción
-     * que convertimos en un mensaje legible.
+     * (yyyy-MM-dd). Si no lo es, LocalDate.parse lanza una excepcion
+     * que convertimos en un mensaje 
      */
     private void validarFecha(String texto) {
         try {
             LocalDate.parse(texto);
         } catch (DateTimeParseException ex) {
-            throw new RuntimeException("Fecha incorrecta: " + texto + " (usa yyyy-MM-dd).");
+            throw new RuntimeException("Fecha incorrecta: " + texto + " (usa yyyy-MM-dd)");
         }
     }
 
@@ -174,7 +174,7 @@ public class OcupaPanel extends JPanel {
             recargar();
             limpiar();
         } catch (DAOException ex) {
-            // Suele ser FK fallida: NSS o codigo_plaza no existen.
+            // Suele ser FK fallida: NSS o codigo_plaza no existen
             error(ex.getMessage());
         } catch (RuntimeException ex) {
             error(ex.getMessage());

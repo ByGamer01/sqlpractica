@@ -28,22 +28,22 @@ import com.sqlpractica.model.Empleado;
 public class EmpleadoDAO {
 
     /**
-     * Crea un empleado nuevo en la tabla.
-     *  1. Preparamos la sentencia INSERT con 5 huecos '?'.
-     *  2. Rellenamos los huecos con los datos del objeto.
-     *  3. Llamamos a executeUpdate(), que ejecuta el INSERT.
+     * Crea un empleado nuevo en la tablalllllllllllllllllllllllllllllllllllll
+     *  1. Preparamos la sentencia INSERT con 5 huecos '?'
+     *  2. Rellenamos los huecos con los datos del objeto
+     *  3. Llamamos a executeUpdate(), que ejecuta el INSERT
      *  4. Si SQLite devuelve un error (p.ej. NSS duplicado), lo
-     *     capturamos y lanzamos DAOException con un mensaje legible.
+     *     capturamos y lanzamos DAOException con un mensaje
      */
-    public void insertar(Empleado e) throws DAOException {
+    public void insertar(Empleado empleado) throws DAOException {
         String sql = "INSERT INTO empleado(nss, nombre, apellidos, email, iban) VALUES (?, ?, ?, ?, ?)";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, e.getNss());
-            ps.setString(2, e.getNombre());
-            ps.setString(3, e.getApellidos());
-            ps.setString(4, e.getEmail());
-            ps.setString(5, e.getIban());
+            ps.setString(1, empleado.getNss());
+            ps.setString(2, empleado.getNombre());
+            ps.setString(3, empleado.getApellidos());
+            ps.setString(4, empleado.getEmail());
+            ps.setString(5, empleado.getIban());
             ps.executeUpdate();
         } catch (SQLException ex) {
             throw new DAOException("No se ha podido crear el empleado: " + ex.getMessage(), ex);
@@ -55,18 +55,18 @@ public class EmpleadoDAO {
      * executeUpdate() devuelve el número de filas afectadas.
      * Si es 0 -> no había ningún empleado con ese NSS: avisamos al usuario.
      */
-    public void actualizar(Empleado e) throws DAOException {
+    public void actualizar(Empleado empleado) throws DAOException {
         String sql = "UPDATE empleado SET nombre = ?, apellidos = ?, email = ?, iban = ? WHERE nss = ?";
         Connection conn = Database.obtenerConexion();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, e.getNombre());
-            ps.setString(2, e.getApellidos());
-            ps.setString(3, e.getEmail());
-            ps.setString(4, e.getIban());
-            ps.setString(5, e.getNss());
+            ps.setString(1, empleado.getNombre());
+            ps.setString(2, empleado.getApellidos());
+            ps.setString(3, empleado.getEmail());
+            ps.setString(4, empleado.getIban());
+            ps.setString(5, empleado.getNss());
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ningún empleado con NSS '" + e.getNss() + "'.");
+                throw new DAOException("No existe ningún empleado con NSS '" + empleado.getNss() + "'.");
             }
         } catch (SQLException ex) {
             throw new DAOException("No se ha podido actualizar el empleado: " + ex.getMessage(), ex);
@@ -93,12 +93,12 @@ public class EmpleadoDAO {
     }
 
     /**
-     * Devuelve TODOS los empleados, ordenados por apellidos+nombre.
-     *  1. Ejecutamos SELECT con executeQuery() (devuelve un ResultSet).
+     * Devuelve TODOS los empleados, ordenados por apellidos+nombre
+     *  1. Ejecutamos SELECT con executeQuery() (devuelve un ResultSet)
      *  2. Recorremos el ResultSet con while(rs.next()), creando un
-     *     objeto Empleado por cada fila y añadiéndolo a la lista.
+     *     objeto Empleado por cada fila y añadiéndolo a la lista
      *  3. try-with-resources cierra el PreparedStatement y el ResultSet
-     *     automáticamente al salir del bloque.
+     *     automáticamente al salir del bloque
      */
     public List<Empleado> obtenerTodos() throws DAOException {
         String sql = "SELECT nss, nombre, apellidos, email, iban FROM empleado ORDER BY apellidos, nombre";

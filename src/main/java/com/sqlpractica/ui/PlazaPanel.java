@@ -104,7 +104,7 @@ public class PlazaPanel extends JPanel {
             List<Plaza> lista = dao.obtenerTodos();
             for (Plaza p : lista) {
                 // Si supervisora o informe son null, mostramos "" en la
-                // tabla en vez de la palabra "null".
+                // tabla en vez de la palabra "null"
                 String supervisora = p.getCodigoPlazaSupervisora();
                 String informe = p.getInformeSupervision();
 
@@ -139,7 +139,7 @@ public class PlazaPanel extends JPanel {
      * Lee los campos del formulario, los valida y construye un objeto Plaza.
      * Si algún campo obligatorio está vacío o el salario no es un número,
      * lanza RuntimeException con un mensaje claro (que crear/editar
-     * convertirán en un diálogo de error).
+     * convertirán en un diálogo de error)
      */
     private Plaza leerFormulario() {
         if (tfCodigo.getText().isBlank()) {
@@ -161,7 +161,7 @@ public class PlazaPanel extends JPanel {
             throw new RuntimeException("El salario tiene que ser un número.");
         }
 
-        // Campos opcionales: si están vacíos, null para que la BD guarde NULL.
+        // Campos opcionales: si están vacíos, null para que la BD guarde NULL
         String supervisora = tfSupervisora.getText().trim();
         String informe = tfInforme.getText().trim();
 
@@ -179,13 +179,10 @@ public class PlazaPanel extends JPanel {
             dao.insertar(leerFormulario());
             recargar();
             limpiar();
-        } catch (DAOException ex) {
-            // Error proveniente de la BD (p.ej. tipo_plaza no existe).
+        } catch (DAOException | RuntimeException ex) {
+            // Error proveniente de la BD y de validacion por leerFormulario()
             error(ex.getMessage());
-        } catch (RuntimeException ex) {
-            // Error de validación lanzado por leerFormulario().
-            error(ex.getMessage());
-        }
+        }        
     }
 
     private void editar() {
@@ -196,9 +193,7 @@ public class PlazaPanel extends JPanel {
         try {
             dao.actualizar(leerFormulario());
             recargar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
-        } catch (RuntimeException ex) {
+        } catch (DAOException | RuntimeException ex) {
             error(ex.getMessage());
         }
     }
@@ -210,7 +205,7 @@ public class PlazaPanel extends JPanel {
         }
         int respuesta = JOptionPane.showConfirmDialog(
                 this,
-                "¿Eliminar la plaza '" + tfCodigo.getText() + "'?",
+                "¿Eliminar la plaza " + tfCodigo.getText() + "?",
                 "Confirmar",
                 JOptionPane.YES_NO_OPTION);
         if (respuesta != JOptionPane.YES_OPTION) {

@@ -92,8 +92,8 @@ public class TipoPlazaPanel extends JPanel {
             List<TipoPlaza> lista = dao.obtenerTodos();
             for (TipoPlaza t : lista) {
                 modelo.addRow(new Object[] {
-                        t.obtenerNombre(),
-                        t.obtenerFuncion()
+                        t.getNombre(),
+                        t.getFuncion()
                 });
             }
         } catch (DAOException ex) {
@@ -128,7 +128,7 @@ public class TipoPlazaPanel extends JPanel {
         }
     }
 
-    /** El nombre es PK, por eso solo se actualiza la 'funcion'. */
+    /** El nombre es PK, por eso solo se actualiza la "funcion" */
     private void editar() {
         if (tfNombre.getText().isBlank()) {
             error("Selecciona un tipo de plaza.");
@@ -164,7 +164,7 @@ public class TipoPlazaPanel extends JPanel {
             limpiar();
         } catch (DAOException ex) {
             // Aquí cae el "FOREIGN KEY constraint failed" si el tipo
-            // está siendo usado por alguna plaza.
+            // está siendo usado por alguna plaza
             error(ex.getMessage());
         }
     }
