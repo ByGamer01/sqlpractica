@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import com.sqlpractica.DAOException;
 import com.sqlpractica.dao.PlazaDAO;
 import com.sqlpractica.model.Plaza;
 
@@ -99,26 +98,26 @@ public class PlazaPanel extends JPanel {
     }
 
     private void recargar() {
-        try {
-            modelo.setRowCount(0);
-            List<Plaza> lista = dao.obtenerTodos();
-            for (Plaza p : lista) {
-                // Si supervisora o informe son null, mostramos "" en la
-                // tabla en vez de la palabra "null"
-                String supervisora = p.getCodigoPlazaSupervisora();
-                String informe = p.getInformeSupervision();
+        List<Plaza> lista = dao.obtenerTodos();
+        if (lista == null) {
+            error(dao.getMensajeError());
+            return;
+        }
+        modelo.setRowCount(0);
+        for (Plaza p : lista) {
+            // Si supervisora o informe son null, mostramos "" en la
+            // tabla en vez de la palabra "null"
+            String supervisora = p.getCodigoPlazaSupervisora();
+            String informe = p.getInformeSupervision();
 
-                modelo.addRow(new Object[] {
-                    p.getCodigo(),
-                    p.getNombre(),
-                    p.getSalario(),
-                    supervisora == null ? "" : supervisora,
-                    informe == null ? "" : informe,
-                    p.getNombreTipoPlaza()
-                });
-            }
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+            modelo.addRow(new Object[] {
+                p.getCodigo(),
+                p.getNombre(),
+                p.getSalario(),
+                supervisora == null ? "" : supervisora,
+                informe == null ? "" : informe,
+                p.getNombreTipoPlaza()
+            });
         }
     }
 
@@ -138,18 +137,20 @@ public class PlazaPanel extends JPanel {
     /**
      * Lee los campos del formulario, los valida y construye un objeto Plaza.
      * Si algún campo obligatorio está vacío o el salario no es un número,
-     * lanza RuntimeException con un mensaje claro (que crear/editar
-     * convertirán en un diálogo de error)
+     * muestra un diálogo de error y devuelve null.
      */
     private Plaza leerFormulario() {
         if (tfCodigo.getText().isBlank()) {
-            throw new RuntimeException("El código es obligatorio.");
+            error("El código es obligatorio.");
+            return null;
         }
         if (tfNombre.getText().isBlank()) {
-            throw new RuntimeException("El nombre es obligatorio.");
+            error("El nombre es obligatorio.");
+            return null;
         }
         if (tfTipo.getText().isBlank()) {
-            throw new RuntimeException("El tipo de plaza es obligatorio.");
+            error("El tipo de plaza es obligatorio.");
+            return null;
         }
 
         // Salario: convertir el texto a double.
@@ -158,7 +159,8 @@ public class PlazaPanel extends JPanel {
         try {
             salario = Double.parseDouble(tfSalario.getText().trim().replace(",", "."));
         } catch (NumberFormatException ex) {
-            throw new RuntimeException("El salario tiene que ser un número.");
+            error("El salario tiene que ser un número.");
+            return null;
         }
 
         // Campos opcionales: si están vacíos, null para que la BD guarde NULL
@@ -175,14 +177,16 @@ public class PlazaPanel extends JPanel {
     }
 
     private void crear() {
-        try {
-            dao.insertar(leerFormulario());
-            recargar();
-            limpiar();
-        } catch (DAOException | RuntimeException ex) {
-            // Error proveniente de la BD y de validacion por leerFormulario()
-            error(ex.getMessage());
-        }        
+        Plaza p = leerFormulario();
+        if (p == null) {
+            return;
+        }
+        if (!dao.insertar(p)) {
+            error(dao.getMensajeError());
+            return;
+        }
+        recargar();
+        limpiar();
     }
 
     private void editar() {
@@ -190,12 +194,15 @@ public class PlazaPanel extends JPanel {
             error("Selecciona una plaza.");
             return;
         }
-        try {
-            dao.actualizar(leerFormulario());
-            recargar();
-        } catch (DAOException | RuntimeException ex) {
-            error(ex.getMessage());
+        Plaza p = leerFormulario();
+        if (p == null) {
+            return;
         }
+        if (!dao.actualizar(p)) {
+            error(dao.getMensajeError());
+            return;
+        }
+        recargar();
     }
 
     private void eliminar() {
@@ -211,13 +218,12 @@ public class PlazaPanel extends JPanel {
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
-        try {
-            dao.eliminar(tfCodigo.getText().trim());
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        if (!dao.eliminar(tfCodigo.getText().trim())) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
+        limpiar();
     }
 
     private void limpiar() {

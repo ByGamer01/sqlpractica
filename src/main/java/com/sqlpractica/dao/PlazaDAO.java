@@ -8,7 +8,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sqlpractica.DAOException;
 import com.sqlpractica.Database;
 import com.sqlpractica.model.Plaza;
 
@@ -22,10 +21,20 @@ import com.sqlpractica.model.Plaza;
  */
 public class PlazaDAO {
 
-    public void insertar(Plaza p) throws DAOException {
+    private String mensajeError = "";
+
+    public String getMensajeError() {
+        return mensajeError;
+    }
+
+    public boolean insertar(Plaza p) {
         String sql = "INSERT INTO plaza(codigo, nombre, salario, codigo_plaza_supervisora, " +
                      "informe_supervision, nombre_tipo_plaza) VALUES (?, ?, ?, ?, ?, ?)";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return false;
+        }
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getCodigo());
             ps.setString(2, p.getNombre());
@@ -34,16 +43,22 @@ public class PlazaDAO {
             asignarTextoOpcional(ps, 5, p.getInformeSupervision());
             ps.setString(6, p.getNombreTipoPlaza());
             ps.executeUpdate();
+            return true;
         } catch (SQLException e) {
-            throw new DAOException("No se ha podido crear la plaza: " + e.getMessage(), e);
+            mensajeError = "No se ha podido crear la plaza: " + e.getMessage();
+            return false;
         }
     }
 
-    public void actualizar(Plaza p) throws DAOException {
+    public boolean actualizar(Plaza p) {
         // No tocamos la PK 'codigo' (va en el WHERE), sí cambian el resto.
         String sql = "UPDATE plaza SET nombre = ?, salario = ?, codigo_plaza_supervisora = ?, " +
                      "informe_supervision = ?, nombre_tipo_plaza = ? WHERE codigo = ?";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return false;
+        }
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getNombre());
             ps.setDouble(2, p.getSalario());
@@ -53,31 +68,45 @@ public class PlazaDAO {
             ps.setString(6, p.getCodigo());
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ninguna plaza con código '" + p.getCodigo() + "'.");
+                mensajeError = "No existe ninguna plaza con código '" + p.getCodigo() + "'.";
+                return false;
             }
+            return true;
         } catch (SQLException e) {
-            throw new DAOException("No se ha podido actualizar la plaza: " + e.getMessage(), e);
+            mensajeError = "No se ha podido actualizar la plaza: " + e.getMessage();
+            return false;
         }
     }
 
-    public void eliminar(String codigo) throws DAOException {
+    public boolean eliminar(String codigo) {
         String sql = "DELETE FROM plaza WHERE codigo = ?";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return false;
+        }
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, codigo);
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ninguna plaza con código '" + codigo + "'.");
+                mensajeError = "No existe ninguna plaza con código '" + codigo + "'.";
+                return false;
             }
+            return true;
         } catch (SQLException e) {
-            throw new DAOException("No se ha podido eliminar la plaza: " + e.getMessage(), e);
+            mensajeError = "No se ha podido eliminar la plaza: " + e.getMessage();
+            return false;
         }
     }
 
-    public List<Plaza> obtenerTodos() throws DAOException {
+    public List<Plaza> obtenerTodos() {
         String sql = "SELECT codigo, nombre, salario, codigo_plaza_supervisora, " +
                      "informe_supervision, nombre_tipo_plaza FROM plaza ORDER BY codigo";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return null;
+        }
         List<Plaza> resultado = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -93,10 +122,11 @@ public class PlazaDAO {
                         rs.getString("nombre_tipo_plaza")
                 ));
             }
+            return resultado;
         } catch (SQLException e) {
-            throw new DAOException("Error leyendo las plazas: " + e.getMessage(), e);
+            mensajeError = "Error leyendo las plazas: " + e.getMessage();
+            return null;
         }
-        return resultado;
     }
 
     /**

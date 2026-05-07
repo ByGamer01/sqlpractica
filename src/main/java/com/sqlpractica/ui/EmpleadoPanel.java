@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import com.sqlpractica.DAOException;
 import com.sqlpractica.dao.EmpleadoDAO;
 import com.sqlpractica.model.Empleado;
 
@@ -50,7 +49,7 @@ public class EmpleadoPanel extends JPanel {
     // Modelo de la tabla: define las columnas y guarda las filas
     // isCellEditable = false -> el usuario NO puede editar la tabla
     // directamente; solo a través del formulario
-    private final DefaultTableModel modelo = new DefaultTableModel( 
+    private final DefaultTableModel modelo = new DefaultTableModel(
         new String[] {
             "NSS",
             "Nombre",
@@ -141,22 +140,21 @@ public class EmpleadoPanel extends JPanel {
      * setRowCount(0) -> elimina todas las filas existentes.
      */
     private void recargar() {
-        try {
-            modelo.setRowCount(0);
-            List<Empleado> lista = dao.obtenerTodos();
-            for (Empleado e : lista) {
-
-                // addRow añade una fila al final de la tabla.
-                modelo.addRow(new Object[] {
-                    e.getNss(),
-                    e.getNombre(),
-                    e.getApellidos(),
-                    e.getEmail(),
-                    e.getIban()
-                });
-            }
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        List<Empleado> lista = dao.obtenerTodos();
+        if (lista == null) {
+            error(dao.getMensajeError());
+            return;
+        }
+        modelo.setRowCount(0);
+        for (Empleado e : lista) {
+            // addRow añade una fila al final de la tabla.
+            modelo.addRow(new Object[] {
+                e.getNss(),
+                e.getNombre(),
+                e.getApellidos(),
+                e.getEmail(),
+                e.getIban()
+            });
         }
     }
 
@@ -188,19 +186,18 @@ public class EmpleadoPanel extends JPanel {
             error("NSS, nombre y apellidos son obligatorios.");
             return;
         }
-        try {
-            Empleado nuevo = new Empleado(
-                    tfNss.getText().trim(),
-                    tfNombre.getText().trim(),
-                    tfApellidos.getText().trim(),
-                    tfEmail.getText().trim(),
-                    tfIban.getText().trim());
-            dao.insertar(nuevo);
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        Empleado nuevo = new Empleado(
+                tfNss.getText().trim(),
+                tfNombre.getText().trim(),
+                tfApellidos.getText().trim(),
+                tfEmail.getText().trim(),
+                tfIban.getText().trim());
+        if (!dao.insertar(nuevo)) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
+        limpiar();
     }
 
     /**
@@ -212,18 +209,17 @@ public class EmpleadoPanel extends JPanel {
             error("Selecciona un empleado.");
             return;
         }
-        try {
-            Empleado modificado = new Empleado(
-                    tfNss.getText().trim(),
-                    tfNombre.getText().trim(),
-                    tfApellidos.getText().trim(),
-                    tfEmail.getText().trim(),
-                    tfIban.getText().trim());
-            dao.actualizar(modificado);
-            recargar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        Empleado modificado = new Empleado(
+                tfNss.getText().trim(),
+                tfNombre.getText().trim(),
+                tfApellidos.getText().trim(),
+                tfEmail.getText().trim(),
+                tfIban.getText().trim());
+        if (!dao.actualizar(modificado)) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
     }
 
     /**
@@ -243,13 +239,12 @@ public class EmpleadoPanel extends JPanel {
             // El usuario ha pulsado "No" o ha cerrado el diálogo.
             return;
         }
-        try {
-            dao.eliminar(tfNss.getText().trim());
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        if (!dao.eliminar(tfNss.getText().trim())) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
+        limpiar();
     }
 
     /** Vacía los campos y deselecciona la tabla. */

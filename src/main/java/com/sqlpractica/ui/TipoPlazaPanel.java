@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import com.sqlpractica.DAOException;
 import com.sqlpractica.dao.TipoPlazaDAO;
 import com.sqlpractica.model.TipoPlaza;
 
@@ -87,17 +86,17 @@ public class TipoPlazaPanel extends JPanel {
 
     /** Recarga la tabla pidiendo todos los tipos al DAO. */
     private void recargar() {
-        try {
-            modelo.setRowCount(0);
-            List<TipoPlaza> lista = dao.obtenerTodos();
-            for (TipoPlaza t : lista) {
-                modelo.addRow(new Object[] {
-                        t.getNombre(),
-                        t.getFuncion()
-                });
-            }
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        List<TipoPlaza> lista = dao.obtenerTodos();
+        if (lista == null) {
+            error(dao.getMensajeError());
+            return;
+        }
+        modelo.setRowCount(0);
+        for (TipoPlaza t : lista) {
+            modelo.addRow(new Object[] {
+                    t.getNombre(),
+                    t.getFuncion()
+            });
         }
     }
 
@@ -116,16 +115,15 @@ public class TipoPlazaPanel extends JPanel {
             error("El nombre es obligatorio.");
             return;
         }
-        try {
-            TipoPlaza nuevo = new TipoPlaza(
-                    tfNombre.getText().trim(),
-                    tfFuncion.getText().trim());
-            dao.insertar(nuevo);
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        TipoPlaza nuevo = new TipoPlaza(
+                tfNombre.getText().trim(),
+                tfFuncion.getText().trim());
+        if (!dao.insertar(nuevo)) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
+        limpiar();
     }
 
     /** El nombre es PK, por eso solo se actualiza la "funcion" */
@@ -134,15 +132,14 @@ public class TipoPlazaPanel extends JPanel {
             error("Selecciona un tipo de plaza.");
             return;
         }
-        try {
-            TipoPlaza modificado = new TipoPlaza(
-                    tfNombre.getText().trim(),
-                    tfFuncion.getText().trim());
-            dao.actualizar(modificado);
-            recargar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        TipoPlaza modificado = new TipoPlaza(
+                tfNombre.getText().trim(),
+                tfFuncion.getText().trim());
+        if (!dao.actualizar(modificado)) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
     }
 
     private void eliminar() {
@@ -158,15 +155,14 @@ public class TipoPlazaPanel extends JPanel {
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
-        try {
-            dao.eliminar(tfNombre.getText().trim());
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            // Aquí cae el "FOREIGN KEY constraint failed" si el tipo
-            // está siendo usado por alguna plaza
-            error(ex.getMessage());
+        // Aquí cae el "FOREIGN KEY constraint failed" si el tipo
+        // está siendo usado por alguna plaza
+        if (!dao.eliminar(tfNombre.getText().trim())) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
+        limpiar();
     }
 
     private void limpiar() {

@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import com.sqlpractica.DAOException;
 import com.sqlpractica.dao.NominaDAO;
 import com.sqlpractica.model.Nomina;
 
@@ -105,20 +104,20 @@ public class NominaPanel extends JPanel {
     }
 
     private void recargar() {
-        try {
-            modelo.setRowCount(0);
-            List<Nomina> lista = dao.obtenerTodos();
-            for (Nomina n : lista) {
-                modelo.addRow(new Object[] {
-                        n.getId(),
-                        n.getIbanPago(),
-                        n.getImportePago(),
-                        n.getNssEmpleado(),
-                        n.getCodigoPlaza()
-                });
-            }
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        List<Nomina> lista = dao.obtenerTodos();
+        if (lista == null) {
+            error(dao.getMensajeError());
+            return;
+        }
+        modelo.setRowCount(0);
+        for (Nomina n : lista) {
+            modelo.addRow(new Object[] {
+                    n.getId(),
+                    n.getIbanPago(),
+                    n.getImportePago(),
+                    n.getNssEmpleado(),
+                    n.getCodigoPlaza()
+            });
         }
     }
 
@@ -136,19 +135,23 @@ public class NominaPanel extends JPanel {
 
     /**
      * Construye un objeto Nomina a partir del formulario.
+     * Muestra un error y devuelve null si la validación falla.
      *
      * @param conId true si queremos leer también el ID (al editar);
      *              false al crear (el ID lo asigna la BD).
      */
     private Nomina leerFormulario(boolean conId) {
         if (tfIban.getText().isBlank()) {
-            throw new RuntimeException("El IBAN es obligatorio.");
+            error("El IBAN es obligatorio.");
+            return null;
         }
         if (tfNss.getText().isBlank()) {
-            throw new RuntimeException("El NSS es obligatorio.");
+            error("El NSS es obligatorio.");
+            return null;
         }
         if (tfPlaza.getText().isBlank()) {
-            throw new RuntimeException("El código de plaza es obligatorio.");
+            error("El código de plaza es obligatorio.");
+            return null;
         }
 
         // Importe -> double, aceptando coma o punto decimal.
@@ -156,7 +159,8 @@ public class NominaPanel extends JPanel {
         try {
             importe = Double.parseDouble(tfImporte.getText().trim().replace(",", "."));
         } catch (NumberFormatException ex) {
-            throw new RuntimeException("El importe tiene que ser un número.");
+            error("El importe tiene que ser un número.");
+            return null;
         }
 
         // Solo leemos el ID en modo edición.
@@ -165,7 +169,8 @@ public class NominaPanel extends JPanel {
             try {
                 id = Integer.parseInt(tfId.getText().trim());
             } catch (NumberFormatException ex) {
-                throw new RuntimeException("Selecciona una nómina (ID inválido).");
+                error("Selecciona una nómina (ID inválido).");
+                return null;
             }
         }
 
@@ -178,16 +183,17 @@ public class NominaPanel extends JPanel {
     }
 
     private void crear() {
-        try {
-            // false = no leer ID (es null para que la BD lo genere).
-            dao.insertar(leerFormulario(false));
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
-        } catch (RuntimeException ex) {
-            error(ex.getMessage());
+        // false = no leer ID (es null para que la BD lo genere).
+        Nomina n = leerFormulario(false);
+        if (n == null) {
+            return;
         }
+        if (!dao.insertar(n)) {
+            error(dao.getMensajeError());
+            return;
+        }
+        recargar();
+        limpiar();
     }
 
     private void editar() {
@@ -195,15 +201,16 @@ public class NominaPanel extends JPanel {
             error("Selecciona una nómina.");
             return;
         }
-        try {
-            // true = leer ID (es la PK que identifica la fila).
-            dao.actualizar(leerFormulario(true));
-            recargar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
-        } catch (RuntimeException ex) {
-            error(ex.getMessage());
+        // true = leer ID (es la PK que identifica la fila).
+        Nomina n = leerFormulario(true);
+        if (n == null) {
+            return;
         }
+        if (!dao.actualizar(n)) {
+            error(dao.getMensajeError());
+            return;
+        }
+        recargar();
     }
 
     private void eliminar() {
@@ -219,14 +226,13 @@ public class NominaPanel extends JPanel {
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
-        try {
-            int id = Integer.parseInt(tfId.getText().trim());
-            dao.eliminar(id);
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        int id = Integer.parseInt(tfId.getText().trim());
+        if (!dao.eliminar(id)) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
+        limpiar();
     }
 
     private void limpiar() {

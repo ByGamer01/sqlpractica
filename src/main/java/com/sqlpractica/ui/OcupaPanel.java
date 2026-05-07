@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import com.sqlpractica.DAOException;
 import com.sqlpractica.dao.OcupaDAO;
 import com.sqlpractica.model.Ocupa;
 
@@ -98,20 +97,20 @@ public class OcupaPanel extends JPanel {
     }
 
     private void recargar() {
-        try {
-            modelo.setRowCount(0);
-            List<Ocupa> lista = dao.obtenerTodos();
-            for (Ocupa o : lista) {
-                String fin = o.getFechaFin();
-                modelo.addRow(new Object[] {
-                        o.getNssEmpleado(),
-                        o.getCodigoPlaza(),
-                        o.getFechaInicio(),
-                        fin == null ? "" : fin
-                });
-            }
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        List<Ocupa> lista = dao.obtenerTodos();
+        if (lista == null) {
+            error(dao.getMensajeError());
+            return;
+        }
+        modelo.setRowCount(0);
+        for (Ocupa o : lista) {
+            String fin = o.getFechaFin();
+            modelo.addRow(new Object[] {
+                    o.getNssEmpleado(),
+                    o.getCodigoPlaza(),
+                    o.getFechaInicio(),
+                    fin == null ? "" : fin
+            });
         }
     }
 
@@ -129,22 +128,42 @@ public class OcupaPanel extends JPanel {
     /**
      * Construye un Ocupa a partir del formulario.
      * Valida los campos obligatorios y el formato de las fechas.
+     * Muestra un error y devuelve null si la validación falla.
+     *
+     * Las fechas se validan con LocalDate.parse(): si el formato es
+     * incorrecto (no es yyyy-MM-dd) lanza DateTimeParseException,
+     * que capturamos para mostrar un mensaje claro al usuario.
      */
     private Ocupa leerFormulario() {
         if (tfNss.getText().isBlank()) {
-            throw new RuntimeException("Falta el NSS del empleado.");
+            error("Falta el NSS del empleado.");
+            return null;
         }
         if (tfPlaza.getText().isBlank()) {
-            throw new RuntimeException("Falta el código de la plaza.");
+            error("Falta el código de la plaza.");
+            return null;
         }
         if (tfFechaInicio.getText().isBlank()) {
-            throw new RuntimeException("Falta la fecha de inicio.");
+            error("Falta la fecha de inicio.");
+            return null;
         }
 
-        // Validamos formato. fechaFin solo se valida si se ha rellenado.
-        validarFecha(tfFechaInicio.getText().trim());
+        // Validar formato fecha inicio.
+        try {
+            LocalDate.parse(tfFechaInicio.getText().trim());
+        } catch (DateTimeParseException ex) {
+            error("Fecha incorrecta: " + tfFechaInicio.getText().trim() + " (usa yyyy-MM-dd)");
+            return null;
+        }
+
+        // Validar formato fecha fin solo si se ha rellenado.
         if (!tfFechaFin.getText().isBlank()) {
-            validarFecha(tfFechaFin.getText().trim());
+            try {
+                LocalDate.parse(tfFechaFin.getText().trim());
+            } catch (DateTimeParseException ex) {
+                error("Fecha incorrecta: " + tfFechaFin.getText().trim() + " (usa yyyy-MM-dd)");
+                return null;
+            }
         }
 
         String fin = tfFechaFin.getText().trim();
@@ -155,30 +174,18 @@ public class OcupaPanel extends JPanel {
                 fin.isEmpty() ? null : fin);
     }
 
-    /**
-     * Comprueba que el texto sea una fecha válida en formato ISO
-     * (yyyy-MM-dd). Si no lo es, LocalDate.parse lanza una excepcion
-     * que convertimos en un mensaje 
-     */
-    private void validarFecha(String texto) {
-        try {
-            LocalDate.parse(texto);
-        } catch (DateTimeParseException ex) {
-            throw new RuntimeException("Fecha incorrecta: " + texto + " (usa yyyy-MM-dd)");
-        }
-    }
-
     private void crear() {
-        try {
-            dao.insertar(leerFormulario());
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            // Suele ser FK fallida: NSS o codigo_plaza no existen
-            error(ex.getMessage());
-        } catch (RuntimeException ex) {
-            error(ex.getMessage());
+        Ocupa o = leerFormulario();
+        if (o == null) {
+            return;
         }
+        // Suele ser FK fallida: NSS o codigo_plaza no existen
+        if (!dao.insertar(o)) {
+            error(dao.getMensajeError());
+            return;
+        }
+        recargar();
+        limpiar();
     }
 
     /**
@@ -190,14 +197,15 @@ public class OcupaPanel extends JPanel {
             error("Selecciona una ocupación.");
             return;
         }
-        try {
-            dao.actualizar(leerFormulario());
-            recargar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
-        } catch (RuntimeException ex) {
-            error(ex.getMessage());
+        Ocupa o = leerFormulario();
+        if (o == null) {
+            return;
         }
+        if (!dao.actualizar(o)) {
+            error(dao.getMensajeError());
+            return;
+        }
+        recargar();
     }
 
     private void eliminar() {
@@ -213,13 +221,12 @@ public class OcupaPanel extends JPanel {
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
-        try {
-            dao.eliminar(tfNss.getText().trim(), tfPlaza.getText().trim());
-            recargar();
-            limpiar();
-        } catch (DAOException ex) {
-            error(ex.getMessage());
+        if (!dao.eliminar(tfNss.getText().trim(), tfPlaza.getText().trim())) {
+            error(dao.getMensajeError());
+            return;
         }
+        recargar();
+        limpiar();
     }
 
     private void limpiar() {

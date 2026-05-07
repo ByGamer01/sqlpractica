@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sqlpractica.DAOException;
 import com.sqlpractica.Database;
 import com.sqlpractica.model.Nomina;
 
@@ -18,7 +17,7 @@ import com.sqlpractica.model.Nomina;
  * NOVEDAD: el id es AUTOINCREMENT (lo genera SQLite). Por eso, al
  * insertar, pedimos a JDBC que nos devuelva la "clave generada" con
  * Statement.RETURN_GENERATED_KEYS y se la metemos al objeto Nomina
- * con asignarId(). De esta forma, después del insert, el objeto en
+ * con setId(). De esta forma, después del insert, el objeto en
  * memoria queda con su ID real.
  *
  * Doc claves generadas:
@@ -26,10 +25,20 @@ import com.sqlpractica.model.Nomina;
  */
 public class NominaDAO {
 
-    public void insertar(Nomina n) throws DAOException {
+    private String mensajeError = "";
+
+    public String getMensajeError() {
+        return mensajeError;
+    }
+
+    public boolean insertar(Nomina n) {
         String sql = "INSERT INTO nomina(iban_pago, importe_pago, nss_empleado, codigo_plaza) " +
                      "VALUES (?, ?, ?, ?)";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return false;
+        }
         // Pedimos a JDBC que recuerde la clave que SQLite va a generar.
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, n.getIbanPago());
@@ -44,22 +53,29 @@ public class NominaDAO {
                     n.setId(claves.getInt(1));
                 }
             }
+            return true;
         } catch (SQLException e) {
-            throw new DAOException("No se ha podido crear la nómina: " + e.getMessage(), e);
+            mensajeError = "No se ha podido crear la nómina: " + e.getMessage();
+            return false;
         }
     }
 
     /**
      * Para actualizar, necesitamos sí o sí el id (es la PK).
-     * Si llega null lo tratamos como error de programación.
+     * Si llega null lo tratamos como error de validación.
      */
-    public void actualizar(Nomina n) throws DAOException {
+    public boolean actualizar(Nomina n) {
         if (n.getId() == null) {
-            throw new DAOException("Para actualizar una nómina hay que indicar el ID.");
+            mensajeError = "Para actualizar una nómina hay que indicar el ID.";
+            return false;
         }
         String sql = "UPDATE nomina SET iban_pago = ?, importe_pago = ?, " +
                      "nss_empleado = ?, codigo_plaza = ? WHERE id = ?";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return false;
+        }
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, n.getIbanPago());
             ps.setDouble(2, n.getImportePago());
@@ -68,32 +84,46 @@ public class NominaDAO {
             ps.setInt(5, n.getId());
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ninguna nómina con ID " + n.getId() + ".");
+                mensajeError = "No existe ninguna nómina con ID " + n.getId() + ".";
+                return false;
             }
+            return true;
         } catch (SQLException e) {
-            throw new DAOException("No se ha podido actualizar la nómina: " + e.getMessage(), e);
+            mensajeError = "No se ha podido actualizar la nómina: " + e.getMessage();
+            return false;
         }
     }
 
-    public void eliminar(int id) throws DAOException {
+    public boolean eliminar(int id) {
         String sql = "DELETE FROM nomina WHERE id = ?";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return false;
+        }
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             int filas = ps.executeUpdate();
             if (filas == 0) {
-                throw new DAOException("No existe ninguna nómina con ID " + id + ".");
+                mensajeError = "No existe ninguna nómina con ID " + id + ".";
+                return false;
             }
+            return true;
         } catch (SQLException e) {
-            throw new DAOException("No se ha podido eliminar la nómina: " + e.getMessage(), e);
+            mensajeError = "No se ha podido eliminar la nómina: " + e.getMessage();
+            return false;
         }
     }
 
-    public List<Nomina> obtenerTodos() throws DAOException {
+    public List<Nomina> obtenerTodos() {
         // ORDER BY id DESC: las nóminas más nuevas (id mayor) primero.
         String sql = "SELECT id, iban_pago, importe_pago, nss_empleado, codigo_plaza " +
                      "FROM nomina ORDER BY id DESC";
         Connection conn = Database.obtenerConexion();
+        if (conn == null) {
+            mensajeError = "No hay conexión con la base de datos.";
+            return null;
+        }
         List<Nomina> resultado = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -106,9 +136,10 @@ public class NominaDAO {
                         rs.getString("codigo_plaza")
                 ));
             }
+            return resultado;
         } catch (SQLException e) {
-            throw new DAOException("Error leyendo las nóminas: " + e.getMessage(), e);
+            mensajeError = "Error leyendo las nóminas: " + e.getMessage();
+            return null;
         }
-        return resultado;
     }
 }

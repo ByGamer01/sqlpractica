@@ -27,13 +27,11 @@ public class Main {
 
     public static void main(String[] args) {
         // 1. Inicializar la base de datos (CREATE TABLE IF NOT EXISTS).
-        try {
-            Database.inicializarEsquema();
-        } catch (DAOException e) {
-            // Si no podemos crear las tablas, no tiene sentido seguir.
+        // Si no podemos crear las tablas, no tiene sentido seguir.
+        if (!Database.inicializarEsquema()) {
             JOptionPane.showMessageDialog(
                     null,
-                    "No se ha podido inicializar la base de datos:\n" + e.getMessage(),
+                    "No se ha podido inicializar la base de datos:\n" + Database.getMensajeError(),
                     "Error fatal",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);
