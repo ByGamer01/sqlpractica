@@ -105,27 +105,34 @@ public class NominaPanel extends JPanel {
 
     private void recargar() {
         List<Nomina> lista = dao.obtenerTodos();
+        
         if (lista == null) {
             error(dao.getMensajeError());
             return;
         }
+
         modelo.setRowCount(0);
+
         for (Nomina n : lista) {
-            modelo.addRow(new Object[] {
+            modelo.addRow(
+                new Object[] {
                     n.getId(),
                     n.getIbanPago(),
                     n.getImportePago(),
                     n.getNssEmpleado(),
                     n.getCodigoPlaza()
-            });
+                }
+            );
         }
     }
 
     private void cargarSeleccion() {
         int fila = tabla.getSelectedRow();
+
         if (fila < 0) {
             return;
         }
+
         tfId.setText(textoCelda(fila, 0));
         tfIban.setText(textoCelda(fila, 1));
         tfImporte.setText(textoCelda(fila, 2));
@@ -134,11 +141,11 @@ public class NominaPanel extends JPanel {
     }
 
     /**
-     * Construye un objeto Nomina a partir del formulario.
-     * Muestra un error y devuelve null si la validación falla.
+     * Construye un objeto Nomina a partir del formulario
+     * Muestra un error y devuelve null si la validación falla
      *
-     * @param conId true si queremos leer también el ID (al editar);
-     *              false al crear (el ID lo asigna la BD).
+     * @param conId true si queremos leer también el ID (al editar)
+     *              false al crear (el ID lo asigna la BD)
      */
     private Nomina leerFormulario(boolean conId) {
         if (tfIban.getText().isBlank()) {
@@ -154,10 +161,12 @@ public class NominaPanel extends JPanel {
             return null;
         }
 
-        // Importe -> double, aceptando coma o punto decimal.
+        // Importe -> double, bien con coma o punto decimal
         double importe;
+
         try {
             importe = Double.parseDouble(tfImporte.getText().trim().replace(",", "."));
+
         } catch (NumberFormatException ex) {
             error("El importe tiene que ser un número.");
             return null;
@@ -165,9 +174,11 @@ public class NominaPanel extends JPanel {
 
         // Solo leemos el ID en modo edición.
         Integer id = null;
+
         if (conId) {
             try {
                 id = Integer.parseInt(tfId.getText().trim());
+
             } catch (NumberFormatException ex) {
                 error("Selecciona una nómina (ID inválido).");
                 return null;
@@ -185,13 +196,15 @@ public class NominaPanel extends JPanel {
     private void crear() {
         // false = no leer ID (es null para que la BD lo genere).
         Nomina n = leerFormulario(false);
+
         if (n == null) {
             return;
-        }
+        } 
         if (!dao.insertar(n)) {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
         limpiar();
     }
@@ -201,8 +214,10 @@ public class NominaPanel extends JPanel {
             error("Selecciona una nómina.");
             return;
         }
-        // true = leer ID (es la PK que identifica la fila).
+
+        // true = leer ID (es la PK que identifica la fila)
         Nomina n = leerFormulario(true);
+
         if (n == null) {
             return;
         }
@@ -210,6 +225,7 @@ public class NominaPanel extends JPanel {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
     }
 
@@ -218,15 +234,20 @@ public class NominaPanel extends JPanel {
             error("Selecciona una nómina.");
             return;
         }
+
         int respuesta = JOptionPane.showConfirmDialog(
-                this,
-                "¿Eliminar la nómina " + tfId.getText() + "?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION);
+            this,
+            "¿Eliminar la nómina " + tfId.getText() + "?",
+            "Confirmar",
+            JOptionPane.YES_NO_OPTION
+        );
+
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
+
         int id = Integer.parseInt(tfId.getText().trim());
+
         if (!dao.eliminar(id)) {
             error(dao.getMensajeError());
             return;

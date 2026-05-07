@@ -121,7 +121,7 @@ public class EmpleadoPanel extends JPanel {
         btEliminar.addActionListener(e -> eliminar());
         btLimpiar.addActionListener(e -> limpiar());
 
-        // Los 4 botones en una fila (la última del formulario).
+        // Los 4 botones en una fila (la última del formulario)
         JPanel botones = new JPanel(new GridLayout(1, 4, 4, 4));
         botones.add(btCrear);
         botones.add(btEditar);
@@ -131,13 +131,13 @@ public class EmpleadoPanel extends JPanel {
 
         add(formulario, BorderLayout.SOUTH);
 
-        // Carga inicial de la tabla.
+        // Carga inicial de la tabla
         recargar();
     }
 
     /**
-     * Vacía el modelo y vuelve a leer todos los empleados de la BD.
-     * setRowCount(0) -> elimina todas las filas existentes.
+     * Vacia el modelo y vuelve a leer todos los empleados de la BD
+     * setRowCount(0) -> elimina todas las filas existentes
      */
     private void recargar() {
         List<Empleado> lista = dao.obtenerTodos();
@@ -148,13 +148,15 @@ public class EmpleadoPanel extends JPanel {
         modelo.setRowCount(0);
         for (Empleado e : lista) {
             // addRow añade una fila al final de la tabla.
-            modelo.addRow(new Object[] {
-                e.getNss(),
-                e.getNombre(),
-                e.getApellidos(),
-                e.getEmail(),
-                e.getIban()
-            });
+            modelo.addRow(
+                new Object[] {
+                    e.getNss(),
+                    e.getNombre(),
+                    e.getApellidos(),
+                    e.getEmail(),
+                    e.getIban()
+                }
+            );
         }
     }
 
@@ -263,7 +265,7 @@ public class EmpleadoPanel extends JPanel {
     }
 
     /**
-     * Devuelve el contenido de una celda como String.
+     * Devuelve el contenido de una celda como String
      * Si la celda es null (campo opcional vacío), devuelve "" en vez
      * de "null", para no liar al usuario.
      */

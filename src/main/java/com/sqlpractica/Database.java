@@ -81,61 +81,61 @@ public final class Database {
      */
     public static boolean inicializarEsquema() {
         String[] ddl = new String[] {
-                // Tabla empleado: PK = nss.
-                "CREATE TABLE IF NOT EXISTS empleado (" +
-                        "  nss TEXT PRIMARY KEY," +
-                        "  nombre TEXT NOT NULL," +
-                        "  apellidos TEXT NOT NULL," +
-                        "  email TEXT," +
-                        "  iban TEXT" +
-                        ");",
+            // Tabla empleado: PK = nss.
+            "CREATE TABLE IF NOT EXISTS empleado (" +
+                    "  nss TEXT PRIMARY KEY," +
+                    "  nombre TEXT NOT NULL," +
+                    "  apellidos TEXT NOT NULL," +
+                    "  email TEXT," +
+                    "  iban TEXT" +
+                    ");",
 
-                // Tabla tipo_plaza: PK = nombre. Es una tabla "catálogo".
-                "CREATE TABLE IF NOT EXISTS tipo_plaza (" +
-                        "  nombre TEXT PRIMARY KEY," +
-                        "  funcion TEXT" +
-                        ");",
+            // Tabla tipo_plaza: PK = nombre. Es una tabla "catálogo"
+            "CREATE TABLE IF NOT EXISTS tipo_plaza (" +
+                    "  nombre TEXT PRIMARY KEY," +
+                    "  funcion TEXT" +
+                    ");",
 
-                // Tabla plaza: PK = codigo.
-                // FK codigo_plaza_supervisora -> plaza(codigo) (auto-relación,
-                // se pone NULL si se borra la supervisora)
-                // FK nombre_tipo_plaza -> tipo_plaza(nombre)
-                // (RESTRICT = no se puede borrar un tipo si hay plazas que lo usan)
-                "CREATE TABLE IF NOT EXISTS plaza (" +
-                        "  codigo TEXT PRIMARY KEY," +
-                        "  nombre TEXT NOT NULL," +
-                        "  salario REAL NOT NULL," +
-                        "  codigo_plaza_supervisora TEXT," +
-                        "  informe_supervision TEXT," +
-                        "  nombre_tipo_plaza TEXT NOT NULL," +
-                        "  FOREIGN KEY (codigo_plaza_supervisora) REFERENCES plaza(codigo) ON DELETE SET NULL," +
-                        "  FOREIGN KEY (nombre_tipo_plaza) REFERENCES tipo_plaza(nombre) ON DELETE RESTRICT" +
-                        ");",
+            // Tabla plaza: PK = codigo
+            // FK codigo_plaza_supervisora -> plaza(codigo) (auto-relación,
+            // se pone NULL si se borra la supervisora)
+            // FK nombre_tipo_plaza -> tipo_plaza(nombre)
+            // (RESTRICT = no se puede borrar un tipo si hay plazas que lo usan)
+            "CREATE TABLE IF NOT EXISTS plaza (" +
+                    "  codigo TEXT PRIMARY KEY," +
+                    "  nombre TEXT NOT NULL," +
+                    "  salario REAL NOT NULL," +
+                    "  codigo_plaza_supervisora TEXT," +
+                    "  informe_supervision TEXT," +
+                    "  nombre_tipo_plaza TEXT NOT NULL," +
+                    "  FOREIGN KEY (codigo_plaza_supervisora) REFERENCES plaza(codigo) ON DELETE SET NULL," +
+                    "  FOREIGN KEY (nombre_tipo_plaza) REFERENCES tipo_plaza(nombre) ON DELETE RESTRICT" +
+                    ");",
 
-                // Tabla ocupa: relación N:M entre empleado y plaza
-                // PK compuesta = (nss_empleado, codigo_plaza)
-                // Si se borra el empleado o la plaza, se borran sus ocupaciones (CASCADE)
-                "CREATE TABLE IF NOT EXISTS ocupa (" +
-                        "  nss_empleado TEXT NOT NULL," +
-                        "  codigo_plaza TEXT NOT NULL," +
-                        "  fecha_inicio TEXT NOT NULL," +
-                        "  fecha_fin TEXT," +
-                        "  PRIMARY KEY (nss_empleado, codigo_plaza)," +
-                        "  FOREIGN KEY (nss_empleado) REFERENCES empleado(nss) ON DELETE CASCADE," +
-                        "  FOREIGN KEY (codigo_plaza) REFERENCES plaza(codigo) ON DELETE CASCADE" +
-                        ");",
+            // Tabla ocupa: relación N:M entre empleado y plaza
+            // PK compuesta = (nss_empleado, codigo_plaza)
+            // Si se borra el empleado o la plaza, se borran sus ocupaciones (CASCADE)
+            "CREATE TABLE IF NOT EXISTS ocupa (" +
+                    "  nss_empleado TEXT NOT NULL," +
+                    "  codigo_plaza TEXT NOT NULL," +
+                    "  fecha_inicio TEXT NOT NULL," +
+                    "  fecha_fin TEXT," +
+                    "  PRIMARY KEY (nss_empleado, codigo_plaza)," +
+                    "  FOREIGN KEY (nss_empleado) REFERENCES empleado(nss) ON DELETE CASCADE," +
+                    "  FOREIGN KEY (codigo_plaza) REFERENCES plaza(codigo) ON DELETE CASCADE" +
+                    ");",
 
-                // Tabla nomina: PK = id autoincremental.
-                // Las FK referencian al empleado y a la plaza.
-                "CREATE TABLE IF NOT EXISTS nomina (" +
-                        "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "  iban_pago TEXT NOT NULL," +
-                        "  importe_pago REAL NOT NULL," +
-                        "  nss_empleado TEXT NOT NULL," +
-                        "  codigo_plaza TEXT NOT NULL," +
-                        "  FOREIGN KEY (nss_empleado) REFERENCES empleado(nss) ON DELETE CASCADE," +
-                        "  FOREIGN KEY (codigo_plaza) REFERENCES plaza(codigo) ON DELETE CASCADE" +
-                        ");"
+            // Tabla nomina: PK = id autoincremental.
+            // Las FK referencian al empleado y a la plaza.
+            "CREATE TABLE IF NOT EXISTS nomina (" +
+                    "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "  iban_pago TEXT NOT NULL," +
+                    "  importe_pago REAL NOT NULL," +
+                    "  nss_empleado TEXT NOT NULL," +
+                    "  codigo_plaza TEXT NOT NULL," +
+                    "  FOREIGN KEY (nss_empleado) REFERENCES empleado(nss) ON DELETE CASCADE," +
+                    "  FOREIGN KEY (codigo_plaza) REFERENCES plaza(codigo) ON DELETE CASCADE" +
+                    ");"
         };
 
         Connection conn = obtenerConexion();

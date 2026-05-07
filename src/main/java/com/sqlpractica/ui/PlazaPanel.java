@@ -18,22 +18,30 @@ import com.sqlpractica.dao.PlazaDAO;
 import com.sqlpractica.model.Plaza;
 
 /**
- * Panel CRUD para la tabla 'plaza'.
+ * Panel CRUD para la tabla 'plaza'
  *
  * NOVEDADES respecto a EmpleadoPanel:
  *   - Hay un campo numérico (salario): hay que parsearlo a double, y
- *     si el usuario escribe algo no numérico avisamos.
+ *     si el usuario escribe algo no numérico avisamos
  *   - Hay 2 campos opcionales (supervisora e informe): si vienen
- *     vacíos los pasamos como null al objeto Plaza.
+ *     vacíos los pasamos como null al objeto Plaza
  *   - leerFormulario() centraliza la validación y la conversión de
- *     campos -> objeto Plaza, así crear() y editar() comparten lógica.
+ *     campos -> objeto Plaza, así crear() y editar() comparten lógica
  */
 public class PlazaPanel extends JPanel {
 
     private final PlazaDAO dao = new PlazaDAO();
-
     private final DefaultTableModel modelo = new DefaultTableModel(
-            new String[] {"Código", "Nombre", "Salario", "Supervisora", "Informe", "Tipo"}, 0) {
+        new String[] {
+            "Código",
+            "Nombre",
+            "Salario",
+            "Supervisora",
+            "Informe",
+            "Tipo"
+        },
+        0
+    ) {
         @Override
         public boolean isCellEditable(int fila, int columna) {
             return false;
@@ -58,6 +66,7 @@ public class PlazaPanel extends JPanel {
                 cargarSeleccion();
             }
         });
+
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
         // 6 filas de campos + 1 fila de botones = 7.
@@ -99,33 +108,40 @@ public class PlazaPanel extends JPanel {
 
     private void recargar() {
         List<Plaza> lista = dao.obtenerTodos();
+        
         if (lista == null) {
             error(dao.getMensajeError());
             return;
         }
+
         modelo.setRowCount(0);
+
         for (Plaza p : lista) {
             // Si supervisora o informe son null, mostramos "" en la
             // tabla en vez de la palabra "null"
             String supervisora = p.getCodigoPlazaSupervisora();
             String informe = p.getInformeSupervision();
 
-            modelo.addRow(new Object[] {
-                p.getCodigo(),
-                p.getNombre(),
-                p.getSalario(),
-                supervisora == null ? "" : supervisora,
-                informe == null ? "" : informe,
-                p.getNombreTipoPlaza()
-            });
+            modelo.addRow(
+                new Object[] {
+                    p.getCodigo(),
+                    p.getNombre(),
+                    p.getSalario(),
+                    supervisora == null ? "" : supervisora,
+                    informe == null ? "" : informe,
+                    p.getNombreTipoPlaza()
+                }
+            );
         }
     }
 
     private void cargarSeleccion() {
         int fila = tabla.getSelectedRow();
+
         if (fila < 0) {
             return;
         }
+
         tfCodigo.setText(textoCelda(fila, 0));
         tfNombre.setText(textoCelda(fila, 1));
         tfSalario.setText(textoCelda(fila, 2));
@@ -153,11 +169,13 @@ public class PlazaPanel extends JPanel {
             return null;
         }
 
-        // Salario: convertir el texto a double.
-        // Aceptamos coma o punto decimal -> reemplazamos coma por punto.
+        // Salario: convertir el texto a double
+        // Aceptamos coma o punto decimal -> reemplazamos coma por punto
         double salario;
+
         try {
             salario = Double.parseDouble(tfSalario.getText().trim().replace(",", "."));
+
         } catch (NumberFormatException ex) {
             error("El salario tiene que ser un número.");
             return null;
@@ -168,16 +186,18 @@ public class PlazaPanel extends JPanel {
         String informe = tfInforme.getText().trim();
 
         return new Plaza(
-                tfCodigo.getText().trim(),
-                tfNombre.getText().trim(),
-                salario,
-                supervisora.isEmpty() ? null : supervisora,
-                informe.isEmpty() ? null : informe,
-                tfTipo.getText().trim());
+            tfCodigo.getText().trim(),
+            tfNombre.getText().trim(),
+            salario,
+            supervisora.isEmpty() ? null : supervisora,
+            informe.isEmpty() ? null : informe,
+            tfTipo.getText().trim()
+        );
     }
 
     private void crear() {
         Plaza p = leerFormulario();
+
         if (p == null) {
             return;
         }
@@ -185,6 +205,7 @@ public class PlazaPanel extends JPanel {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
         limpiar();
     }
@@ -194,7 +215,9 @@ public class PlazaPanel extends JPanel {
             error("Selecciona una plaza.");
             return;
         }
+
         Plaza p = leerFormulario();
+
         if (p == null) {
             return;
         }
@@ -202,6 +225,7 @@ public class PlazaPanel extends JPanel {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
     }
 
@@ -210,11 +234,14 @@ public class PlazaPanel extends JPanel {
             error("Selecciona una plaza.");
             return;
         }
+
         int respuesta = JOptionPane.showConfirmDialog(
-                this,
-                "¿Eliminar la plaza " + tfCodigo.getText() + "?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION);
+            this,
+            "¿Eliminar la plaza " + tfCodigo.getText() + "?",
+            "Confirmar",
+            JOptionPane.YES_NO_OPTION
+        );
+
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
@@ -222,6 +249,7 @@ public class PlazaPanel extends JPanel {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
         limpiar();
     }
@@ -242,9 +270,11 @@ public class PlazaPanel extends JPanel {
 
     private String textoCelda(int fila, int columna) {
         Object valor = modelo.getValueAt(fila, columna);
+
         if (valor == null) {
             return "";
         }
+
         return valor.toString();
     }
 }

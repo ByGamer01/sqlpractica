@@ -151,6 +151,7 @@ public class OcupaPanel extends JPanel {
         // Validar formato fecha inicio.
         try {
             LocalDate.parse(tfFechaInicio.getText().trim());
+
         } catch (DateTimeParseException ex) {
             error("Fecha incorrecta: " + tfFechaInicio.getText().trim() + " (usa yyyy-MM-dd)");
             return null;
@@ -160,6 +161,7 @@ public class OcupaPanel extends JPanel {
         if (!tfFechaFin.getText().isBlank()) {
             try {
                 LocalDate.parse(tfFechaFin.getText().trim());
+
             } catch (DateTimeParseException ex) {
                 error("Fecha incorrecta: " + tfFechaFin.getText().trim() + " (usa yyyy-MM-dd)");
                 return null;
@@ -167,11 +169,13 @@ public class OcupaPanel extends JPanel {
         }
 
         String fin = tfFechaFin.getText().trim();
+
         return new Ocupa(
-                tfNss.getText().trim(),
-                tfPlaza.getText().trim(),
-                tfFechaInicio.getText().trim(),
-                fin.isEmpty() ? null : fin);
+            tfNss.getText().trim(),
+            tfPlaza.getText().trim(),
+            tfFechaInicio.getText().trim(),
+            fin.isEmpty() ? null : fin
+        );
     }
 
     private void crear() {
@@ -197,7 +201,9 @@ public class OcupaPanel extends JPanel {
             error("Selecciona una ocupación.");
             return;
         }
+
         Ocupa o = leerFormulario();
+         
         if (o == null) {
             return;
         }
@@ -205,6 +211,7 @@ public class OcupaPanel extends JPanel {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
     }
 
@@ -213,11 +220,14 @@ public class OcupaPanel extends JPanel {
             error("Selecciona una ocupación.");
             return;
         }
+
         int respuesta = JOptionPane.showConfirmDialog(
-                this,
-                "¿Eliminar esta ocupación?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION);
+            this,
+            "¿Eliminar esta ocupación?",
+            "Confirmar",
+            JOptionPane.YES_NO_OPTION
+        );
+
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
@@ -225,6 +235,7 @@ public class OcupaPanel extends JPanel {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
         limpiar();
     }
@@ -243,9 +254,11 @@ public class OcupaPanel extends JPanel {
 
     private String textoCelda(int fila, int columna) {
         Object valor = modelo.getValueAt(fila, columna);
+        
         if (valor == null) {
             return "";
         }
+
         return valor.toString();
     }
 }

@@ -26,8 +26,8 @@ import javax.swing.UIManager;
 public class Main {
 
     public static void main(String[] args) {
-        // 1. Inicializar la base de datos (CREATE TABLE IF NOT EXISTS).
-        // Si no podemos crear las tablas, no tiene sentido seguir.
+        // 1. Inicializar la base de datos (CREATE TABLE IF NOT EXISTS)
+        // Si no podemos crear las tablas, no tiene sentido seguir
         if (!Database.inicializarEsquema()) {
             JOptionPane.showMessageDialog(
                     null,
@@ -41,13 +41,13 @@ public class Main {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            // Si falla el look-and-feel, seguimos con el de Java por defecto.
+            // Si falla el look-and-feel, seguimos con el de Java por defecto
         }
 
-        // 3. Cerrar la conexión a SQLite cuando se cierre el programa.
+        // 3. Cerrar la conexión a SQLite cuando se cierre el programa
         Runtime.getRuntime().addShutdownHook(new Thread(Database::cerrar));
 
-        // 4. Construir y mostrar la ventana en el hilo de eventos de Swing.
+        // 4. Construir y mostrar la ventana en el hilo de eventos de Swing
         SwingUtilities.invokeLater(() -> new AppFrame().setVisible(true));
     }
 }

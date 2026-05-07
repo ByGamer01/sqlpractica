@@ -53,6 +53,7 @@ public class TipoPlazaPanel extends JPanel {
                 cargarSeleccion();
             }
         });
+        
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
         // Formulario: 2 filas de campos + 1 fila de botones.
@@ -87,25 +88,32 @@ public class TipoPlazaPanel extends JPanel {
     /** Recarga la tabla pidiendo todos los tipos al DAO. */
     private void recargar() {
         List<TipoPlaza> lista = dao.obtenerTodos();
+
         if (lista == null) {
             error(dao.getMensajeError());
             return;
         }
+
         modelo.setRowCount(0);
+
         for (TipoPlaza t : lista) {
-            modelo.addRow(new Object[] {
+            modelo.addRow(
+                new Object[] {
                     t.getNombre(),
                     t.getFuncion()
-            });
+                }
+            );
         }
     }
 
-    /** Copia la fila seleccionada a los campos del formulario. */
+    /** Copia la fila seleccionada a los campos del formulario */
     private void cargarSeleccion() {
         int fila = tabla.getSelectedRow();
+
         if (fila < 0) {
             return;
         }
+
         tfNombre.setText(textoCelda(fila, 0));
         tfFuncion.setText(textoCelda(fila, 1));
     }
@@ -115,13 +123,17 @@ public class TipoPlazaPanel extends JPanel {
             error("El nombre es obligatorio.");
             return;
         }
+
         TipoPlaza nuevo = new TipoPlaza(
-                tfNombre.getText().trim(),
-                tfFuncion.getText().trim());
+            tfNombre.getText().trim(),
+            tfFuncion.getText().trim()
+        );
+
         if (!dao.insertar(nuevo)) {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
         limpiar();
     }
@@ -132,13 +144,17 @@ public class TipoPlazaPanel extends JPanel {
             error("Selecciona un tipo de plaza.");
             return;
         }
+
         TipoPlaza modificado = new TipoPlaza(
-                tfNombre.getText().trim(),
-                tfFuncion.getText().trim());
+            tfNombre.getText().trim(),
+            tfFuncion.getText().trim()
+        );
+
         if (!dao.actualizar(modificado)) {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
     }
 
@@ -147,20 +163,23 @@ public class TipoPlazaPanel extends JPanel {
             error("Selecciona un tipo de plaza.");
             return;
         }
+
         int respuesta = JOptionPane.showConfirmDialog(
-                this,
-                "¿Eliminar el tipo '" + tfNombre.getText() + "'?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION);
+            this,
+            "¿Eliminar el tipo '" + tfNombre.getText() + "'?",
+            "Confirmar",
+            JOptionPane.YES_NO_OPTION
+        );
+
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
-        // Aquí cae el "FOREIGN KEY constraint failed" si el tipo
-        // está siendo usado por alguna plaza
+        // Aquí cae el "FOREIGN KEY constraint failed" si el tipo esta siendo usado por alguna plaza
         if (!dao.eliminar(tfNombre.getText().trim())) {
             error(dao.getMensajeError());
             return;
         }
+
         recargar();
         limpiar();
     }
@@ -177,9 +196,11 @@ public class TipoPlazaPanel extends JPanel {
 
     private String textoCelda(int fila, int columna) {
         Object valor = modelo.getValueAt(fila, columna);
+
         if (valor == null) {
             return "";
         }
+
         return valor.toString();
     }
 }
