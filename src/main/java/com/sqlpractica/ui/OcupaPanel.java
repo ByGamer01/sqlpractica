@@ -122,9 +122,9 @@ public class OcupaPanel extends JPanel {
   }
 
   /**
-   * Construye un Ocupa a partir del formulario
-   * Valida los campos obligatorios y el formato de las fechas
-   * Muestra un error y devuelve null si la validación falla
+   * Construimos un Ocupa a partir del formulario
+   * Validamos los campos obligatorios y el formato de las fechas
+   * Mostramos un error y devolvemos null si la validación falla
    *
    * Las fechas se validan con LocalDate.parse(): si el formato es
    * incorrecto (no es yyyy-MM-dd) lanza DateTimeParseException,
