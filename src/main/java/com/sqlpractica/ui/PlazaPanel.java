@@ -136,7 +136,8 @@ public class PlazaPanel extends JPanel {
   }
 
   /**
-   * Lee los campos del formulario, los valida y construye un objeto Plaza
+   * Leemos los campos del formulario, los validamos y construimos
+   * un objeto Plaza
    * Si algún campo obligatorio está vacío o el salario no es un número,
    * muestra un diálogo de error y devuelve null
    */
