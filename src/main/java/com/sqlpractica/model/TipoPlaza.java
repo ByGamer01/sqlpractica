@@ -26,7 +26,7 @@ public class TipoPlaza {
   public String getFuncion() { return funcion; }
   public void setFuncion(String funcion) { this.funcion = funcion; }
 
-  // Igualdad por la PK (nombre)
+  // Comparamos por la PK (nombre)
   @Override
   public boolean equals(Object o) {
     if (this == o)
