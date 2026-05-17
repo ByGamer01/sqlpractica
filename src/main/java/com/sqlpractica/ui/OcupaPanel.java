@@ -2,8 +2,9 @@ package com.sqlpractica.ui;
 
 import com.sqlpractica.dao.OcupaDAO;
 import com.sqlpractica.model.Ocupa;
+import com.sqlpractica.ui.components.SectionHeader;
+import com.sqlpractica.ui.components.UiStyles;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -11,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -53,8 +53,18 @@ public class OcupaPanel extends JPanel {
   private final JTextField tfFechaInicio = new JTextField();
   private final JTextField tfFechaFin = new JTextField();
 
-  public OcupaPanel() {
+  private final Runnable volver;
+
+  public OcupaPanel() { this(null); }
+
+  public OcupaPanel(Runnable volver) {
+    this.volver = volver;
     setLayout(new BorderLayout(8, 8));
+    setBackground(UiStyles.BACKGROUND);
+
+    if (volver != null) {
+      add(new SectionHeader("Ocupaciones", volver), BorderLayout.NORTH);
+    }
 
     tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     tabla.getSelectionModel().addListSelectionListener(e -> {
@@ -62,9 +72,13 @@ public class OcupaPanel extends JPanel {
         cargarSeleccion();
       }
     });
-    add(new JScrollPane(tabla), BorderLayout.CENTER);
+    UiStyles.styleTable(tabla);
 
-    JPanel formulario = new JPanel(new GridLayout(5, 2, 4, 4));
+    JPanel contenido = UiStyles.contentPanel();
+    contenido.add(UiStyles.tableScroll(tabla), BorderLayout.CENTER);
+    add(contenido, BorderLayout.CENTER);
+
+    JPanel formulario = UiStyles.formCard(5);
     formulario.add(new JLabel("NSS empleado:"));
     formulario.add(tfNss);
     formulario.add(new JLabel("Código plaza:"));
@@ -74,24 +88,29 @@ public class OcupaPanel extends JPanel {
     formulario.add(new JLabel("Fecha fin (opcional):"));
     formulario.add(tfFechaFin);
 
-    JButton btCrear = new JButton("Crear");
-    JButton btEditar = new JButton("Editar");
-    JButton btEliminar = new JButton("Eliminar");
-    JButton btLimpiar = new JButton("Limpiar");
+    JButton btCrear = UiStyles.actionButton("Crear", UiStyles.SUCCESS);
+    JButton btEditar = UiStyles.actionButton("Editar", UiStyles.PRIMARY);
+    JButton btEliminar = UiStyles.actionButton("Eliminar", UiStyles.DANGER);
+    JButton btLimpiar = UiStyles.actionButton("Limpiar", UiStyles.SECONDARY);
+
+    UiStyles.styleTextField(tfNss);
+    UiStyles.styleTextField(tfPlaza);
+    UiStyles.styleTextField(tfFechaInicio);
+    UiStyles.styleTextField(tfFechaFin);
 
     btCrear.addActionListener(e -> crear());
     btEditar.addActionListener(e -> editar());
     btEliminar.addActionListener(e -> eliminar());
     btLimpiar.addActionListener(e -> limpiar());
 
-    JPanel botones = new JPanel(new GridLayout(1, 4, 4, 4));
+    JPanel botones = UiStyles.buttonRow();
     botones.add(btCrear);
     botones.add(btEditar);
     botones.add(btEliminar);
     botones.add(btLimpiar);
     formulario.add(botones);
 
-    add(formulario, BorderLayout.SOUTH);
+    contenido.add(formulario, BorderLayout.SOUTH);
 
     recargar();
   }

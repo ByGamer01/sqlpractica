@@ -2,14 +2,14 @@ package com.sqlpractica.ui;
 
 import com.sqlpractica.dao.EmpleadoDAO;
 import com.sqlpractica.model.Empleado;
+import com.sqlpractica.ui.components.SectionHeader;
+import com.sqlpractica.ui.components.UiStyles;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -66,9 +66,19 @@ public class EmpleadoPanel extends JPanel {
   private final JTextField tfEmail = new JTextField();
   private final JTextField tfIban = new JTextField();
 
-  public EmpleadoPanel() {
+  private final Runnable volver;
+
+  public EmpleadoPanel() { this(null); }
+
+  public EmpleadoPanel(Runnable volver) {
+    this.volver = volver;
     // BorderLayout permite poner cosas arriba/abajo/centro/izq/dcha
     setLayout(new BorderLayout(8, 8));
+    setBackground(UiStyles.BACKGROUND);
+
+    if (volver != null) {
+      add(new SectionHeader("Empleados", volver), BorderLayout.NORTH);
+    }
 
     // Solo se puede seleccionar una fila a la vez
     tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -83,10 +93,14 @@ public class EmpleadoPanel extends JPanel {
     });
 
     // El JScrollPane permite hacer scroll si hay muchas filas
-    add(new JScrollPane(tabla), BorderLayout.CENTER);
+    UiStyles.styleTable(tabla);
+
+    JPanel contenido = UiStyles.contentPanel();
+    contenido.add(UiStyles.tableScroll(tabla), BorderLayout.CENTER);
+    add(contenido, BorderLayout.CENTER);
 
     // Formulario con 6 filas y 2 columnas (etiqueta | campo)
-    JPanel formulario = new JPanel(new GridLayout(6, 2, 4, 4));
+    JPanel formulario = UiStyles.formCard(6);
     formulario.add(new JLabel("NSS:"));
     formulario.add(tfNss);
     formulario.add(new JLabel("Nombre:"));
@@ -99,28 +113,34 @@ public class EmpleadoPanel extends JPanel {
     formulario.add(tfIban);
 
     // Botones de acción
-    JButton btCrear = new JButton("Crear");
-    JButton btEditar = new JButton("Editar");
-    JButton btEliminar = new JButton("Eliminar");
-    JButton btLimpiar = new JButton("Limpiar");
+    JButton btCrear = UiStyles.actionButton("Crear", UiStyles.SUCCESS);
+    JButton btEditar = UiStyles.actionButton("Editar", UiStyles.PRIMARY);
+    JButton btEliminar = UiStyles.actionButton("Eliminar", UiStyles.DANGER);
+    JButton btLimpiar = UiStyles.actionButton("Limpiar", UiStyles.SECONDARY);
 
     // addActionListener -> qué hacer cuando se pulsa el botón
     // La sintaxis "e -> crear()" es una expresión lambda: una forma
     // corta de escribir un método anónimo
+    UiStyles.styleTextField(tfNss);
+    UiStyles.styleTextField(tfNombre);
+    UiStyles.styleTextField(tfApellidos);
+    UiStyles.styleTextField(tfEmail);
+    UiStyles.styleTextField(tfIban);
+
     btCrear.addActionListener(e -> crear());
     btEditar.addActionListener(e -> editar());
     btEliminar.addActionListener(e -> eliminar());
     btLimpiar.addActionListener(e -> limpiar());
 
     // Los 4 botones en una fila (la última del formulario)
-    JPanel botones = new JPanel(new GridLayout(1, 4, 4, 4));
+    JPanel botones = UiStyles.buttonRow();
     botones.add(btCrear);
     botones.add(btEditar);
     botones.add(btEliminar);
     botones.add(btLimpiar);
     formulario.add(botones);
 
-    add(formulario, BorderLayout.SOUTH);
+    contenido.add(formulario, BorderLayout.SOUTH);
 
     // Carga inicial de la tabla
     recargar();

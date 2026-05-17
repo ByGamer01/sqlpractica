@@ -2,14 +2,14 @@ package com.sqlpractica.ui;
 
 import com.sqlpractica.dao.NominaDAO;
 import com.sqlpractica.model.Nomina;
+import com.sqlpractica.ui.components.SectionHeader;
+import com.sqlpractica.ui.components.UiStyles;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -47,8 +47,18 @@ public class NominaPanel extends JPanel {
   private final JTextField tfNss = new JTextField();
   private final JTextField tfPlaza = new JTextField();
 
-  public NominaPanel() {
+  private final Runnable volver;
+
+  public NominaPanel() { this(null); }
+
+  public NominaPanel(Runnable volver) {
+    this.volver = volver;
     setLayout(new BorderLayout(8, 8));
+    setBackground(UiStyles.BACKGROUND);
+
+    if (volver != null) {
+      add(new SectionHeader("N?minas", volver), BorderLayout.NORTH);
+    }
 
     // El ID lo genera la BD: el usuario no debería tocarlo a mano
     tfId.setEditable(false);
@@ -59,9 +69,13 @@ public class NominaPanel extends JPanel {
         cargarSeleccion();
       }
     });
-    add(new JScrollPane(tabla), BorderLayout.CENTER);
+    UiStyles.styleTable(tabla);
 
-    JPanel formulario = new JPanel(new GridLayout(6, 2, 4, 4));
+    JPanel contenido = UiStyles.contentPanel();
+    contenido.add(UiStyles.tableScroll(tabla), BorderLayout.CENTER);
+    add(contenido, BorderLayout.CENTER);
+
+    JPanel formulario = UiStyles.formCard(6);
     formulario.add(new JLabel("ID (auto):"));
     formulario.add(tfId);
     formulario.add(new JLabel("IBAN pago:"));
@@ -73,24 +87,30 @@ public class NominaPanel extends JPanel {
     formulario.add(new JLabel("Código plaza:"));
     formulario.add(tfPlaza);
 
-    JButton btCrear = new JButton("Crear");
-    JButton btEditar = new JButton("Editar");
-    JButton btEliminar = new JButton("Eliminar");
-    JButton btLimpiar = new JButton("Limpiar");
+    JButton btCrear = UiStyles.actionButton("Crear", UiStyles.SUCCESS);
+    JButton btEditar = UiStyles.actionButton("Editar", UiStyles.PRIMARY);
+    JButton btEliminar = UiStyles.actionButton("Eliminar", UiStyles.DANGER);
+    JButton btLimpiar = UiStyles.actionButton("Limpiar", UiStyles.SECONDARY);
+
+    UiStyles.styleTextField(tfId);
+    UiStyles.styleTextField(tfIban);
+    UiStyles.styleTextField(tfImporte);
+    UiStyles.styleTextField(tfNss);
+    UiStyles.styleTextField(tfPlaza);
 
     btCrear.addActionListener(e -> crear());
     btEditar.addActionListener(e -> editar());
     btEliminar.addActionListener(e -> eliminar());
     btLimpiar.addActionListener(e -> limpiar());
 
-    JPanel botones = new JPanel(new GridLayout(1, 4, 4, 4));
+    JPanel botones = UiStyles.buttonRow();
     botones.add(btCrear);
     botones.add(btEditar);
     botones.add(btEliminar);
     botones.add(btLimpiar);
     formulario.add(botones);
 
-    add(formulario, BorderLayout.SOUTH);
+    contenido.add(formulario, BorderLayout.SOUTH);
 
     recargar();
   }
