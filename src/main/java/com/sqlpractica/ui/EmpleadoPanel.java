@@ -145,7 +145,7 @@ public class EmpleadoPanel extends JPanel {
   }
 
   /**
-   * Copia los datos de la fila seleccionada a los campos del formulario,
+   * Copiamos los datos de la fila seleccionada a los campos del formulario,
    * para poder editar o eliminar ese empleado
    */
   private void cargarSeleccion() {
@@ -162,7 +162,7 @@ public class EmpleadoPanel extends JPanel {
   }
 
   /**
-   * Crea un empleado nuevo a partir de los campos del formulario
+   * Creamos un empleado nuevo a partir de los campos del formulario
    * Validamos primero que los campos obligatorios no estén en blanco
    */
   private void crear() {
@@ -184,7 +184,7 @@ public class EmpleadoPanel extends JPanel {
   }
 
   /**
-   * Actualiza el empleado seleccionado
+   * Actualizamos el empleado seleccionado
    * El NSS no se cambia (es la PK): se usa para localizar la fila
    */
   private void editar() {
@@ -204,7 +204,7 @@ public class EmpleadoPanel extends JPanel {
   }
 
   /**
-   * Borra el empleado seleccionado, pidiendo confirmación primero
+   * Borramos el empleado seleccionado, pidiendo confirmación primero
    */
   private void eliminar() {
     if (tfNss.getText().isBlank()) {
@@ -243,7 +243,7 @@ public class EmpleadoPanel extends JPanel {
   }
 
   /**
-   * Devuelve el contenido de una celda como String
+   * Devolvemos el contenido de una celda como String
    * Si la celda es null (campo opcional vacío), devuelve "" en vez
    * de "null", para no liar al usuario
    */
