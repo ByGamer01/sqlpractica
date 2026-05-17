@@ -11,15 +11,14 @@ import java.util.List;
 /**
  * DAO (Data Access Object) de la tabla 'empleado'
  *
- * LÓGICA / IDEA GENERAL:
- *   - El DAO es la "frontera" entre el resto del programa y JDBC
- *   - Métodos típicos del CRUD: insertar / actualizar / eliminar /
- *     obtenerTodos
- *   - Usa SIEMPRE PreparedStatement (con '?') en vez de concatenar SQL,
- *     para evitar SQL injection y para que JDBC se encargue de poner
- *     comillas, escapar caracteres, etc
- *   - En vez de lanzar excepciones, los métodos devuelven false/null
- *     cuando hay un error; el mensaje queda en mensajeError
+ * IDEA GENERAL:
+ *   - Pensamos en el DAO como la frontera entre el programa y JDBC
+ *   - Métodos típicos del CRUD: insertar / actualizar / eliminar / obtenerTodos
+ *   - usamos SIEMPRE PreparedStatement (con '?') en vez de concatenar SQL,
+ *     para evitar SQL injection (aunque dudo mucho que aqu? inyectemos SQL)
+ *     y para que JDBC se encargue de poner comillas, escapar caracteres, etc
+ *   - En vez de lanzar excepciones hacia la UI, los m?todos devuelven
+ *     false/null cuando hay un error; el mensaje queda en mensajeError
  *
  * Doc PreparedStatement:
  *   https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html
@@ -27,7 +26,7 @@ import java.util.List;
 public class EmpleadoDAO extends BaseDAO {
 
   /**
-   * Crea un empleado nuevo en la tabla
+   * Creamos un empleado nuevo en la tabla
    *  1. Preparamos la sentencia INSERT con 5 huecos '?'
    *  2. Rellenamos los huecos con los datos del objeto
    *  3. Llamamos a executeUpdate(), que ejecuta el INSERT
@@ -56,7 +55,7 @@ public class EmpleadoDAO extends BaseDAO {
   }
 
   /**
-   * Actualiza los datos de un empleado existente (identificado por NSS)
+   * Actualizamos los datos de un empleado existente (identificado por NSS)
    * executeUpdate() devuelve el número de filas afectadas
    * Si es 0 -> no había ningún empleado con ese NSS: guardamos el error
    */
@@ -85,7 +84,7 @@ public class EmpleadoDAO extends BaseDAO {
   }
 
   /**
-   * Borra el empleado con el NSS indicado
+   * Borramos el empleado con el NSS indicado
    * Por las FK con ON DELETE CASCADE, también se borrarán sus
    * filas en 'ocupa' y 'nomina'
    */
@@ -107,12 +106,12 @@ public class EmpleadoDAO extends BaseDAO {
   }
 
   /**
-   * Devuelve TODOS los empleados, ordenados por apellidos y nombre
-   * Devuelve null si hay un error (el mensaje queda en mensajeError)
+   * Devolvemos TODOS los empleados, ordenados por apellidos y nombre
+   * Devolvemos null si hay un error (el mensaje queda en mensajeError)
    *
    *  1. Ejecutamos SELECT con executeQuery() (devuelve un ResultSet)
    *
-   *  2. Recorremos el ResultSet con while(rs.next()), creando un
+   *  2. Recorremos el ResultSet con while(rs.next()), creamos un
    *     objeto Empleado por cada fila y añadiéndolo a la lista
    *
    *  3. try-with-resources cierra el PreparedStatement y el ResultSet
