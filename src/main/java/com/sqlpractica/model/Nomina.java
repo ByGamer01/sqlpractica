@@ -15,46 +15,55 @@ import java.util.Objects;
  */
 public class Nomina {
 
-    // Integer (no int) para poder valer null cuando aun no se ha insertado
-    private Integer id;
-    private String ibanPago;
-    private double importePago;
-    private String nssEmpleado;
-    private String codigoPlaza;
+  // Integer (no int) para poder valer null cuando aun no se ha insertado
+  private Integer id;
+  private String ibanPago;
+  private double importePago;
+  private String nssEmpleado;
+  private String codigoPlaza;
 
-    public Nomina(Integer id, String ibanPago, double importePago, String nssEmpleado, String codigoPlaza) {
-        this.id = id;
-        this.ibanPago = ibanPago;
-        this.importePago = importePago;
-        this.nssEmpleado = nssEmpleado;
-        this.codigoPlaza = codigoPlaza;
-    }
+  public Nomina(Integer id, String ibanPago, double importePago,
+                String nssEmpleado, String codigoPlaza) {
+    this.id = id;
+    this.ibanPago = ibanPago;
+    this.importePago = importePago;
+    this.nssEmpleado = nssEmpleado;
+    this.codigoPlaza = codigoPlaza;
+  }
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+  public Integer getId() { return id; }
+  public void setId(Integer id) { this.id = id; }
 
-    public String getIbanPago() { return ibanPago; }
-    public void setIbanPago(String ibanPago) { this.ibanPago = ibanPago; }
+  public String getIbanPago() { return ibanPago; }
+  public void setIbanPago(String ibanPago) { this.ibanPago = ibanPago; }
 
-    public double getImportePago() { return importePago; }
-    public void setImportePago(double importePago) { this.importePago = importePago; }
+  public double getImportePago() { return importePago; }
+  public void setImportePago(double importePago) {
+    this.importePago = importePago;
+  }
 
-    public String getNssEmpleado() { return nssEmpleado; }
-    public void setNssEmpleado(String nssEmpleado) { this.nssEmpleado = nssEmpleado; }
+  public String getNssEmpleado() { return nssEmpleado; }
+  public void setNssEmpleado(String nssEmpleado) {
+    this.nssEmpleado = nssEmpleado;
+  }
 
-    public String getCodigoPlaza() { return codigoPlaza; }
-    public void setCodigoPlaza(String codigoPlaza) { this.codigoPlaza = codigoPlaza; }
+  public String getCodigoPlaza() { return codigoPlaza; }
+  public void setCodigoPlaza(String codigoPlaza) {
+    this.codigoPlaza = codigoPlaza;
+  }
 
-    // Igualdad por la PK (id).
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Nomina)) return false;
-        return Objects.equals(id, ((Nomina) o).id);
-    }
+  // Igualdad por la PK (id)
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (!(o instanceof Nomina))
+      return false;
+    return Objects.equals(id, ((Nomina)o).id);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }

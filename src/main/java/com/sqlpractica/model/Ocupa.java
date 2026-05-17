@@ -15,43 +15,52 @@ import java.util.Objects;
  */
 public class Ocupa {
 
-    private String nssEmpleado;   // FK a empleado (parte de la PK)
-    private String codigoPlaza;   // FK a plaza   (parte de la PK)
-    private String fechaInicio;   // yyyy-MM-dd
-    private String fechaFin;      // yyyy-MM-dd o null, es opcional
+  private String nssEmpleado; // FK a empleado (parte de la PK)
+  private String codigoPlaza; // FK a plaza   (parte de la PK)
+  private String fechaInicio; // yyyy-MM-dd
+  private String fechaFin;    // yyyy-MM-dd o null, es opcional
 
-    public Ocupa(String nssEmpleado, String codigoPlaza, String fechaInicio, String fechaFin) {
-        this.nssEmpleado = nssEmpleado;
-        this.codigoPlaza = codigoPlaza;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-    }
+  public Ocupa(String nssEmpleado, String codigoPlaza, String fechaInicio,
+               String fechaFin) {
+    this.nssEmpleado = nssEmpleado;
+    this.codigoPlaza = codigoPlaza;
+    this.fechaInicio = fechaInicio;
+    this.fechaFin = fechaFin;
+  }
 
-    public String getNssEmpleado() { return nssEmpleado; }
-    public void setNssEmpleado(String nssEmpleado) { this.nssEmpleado = nssEmpleado; }
+  public String getNssEmpleado() { return nssEmpleado; }
+  public void setNssEmpleado(String nssEmpleado) {
+    this.nssEmpleado = nssEmpleado;
+  }
 
-    public String getCodigoPlaza() { return codigoPlaza; }
-    public void setCodigoPlaza(String codigoPlaza) { this.codigoPlaza = codigoPlaza; }
+  public String getCodigoPlaza() { return codigoPlaza; }
+  public void setCodigoPlaza(String codigoPlaza) {
+    this.codigoPlaza = codigoPlaza;
+  }
 
-    public String getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }
+  public String getFechaInicio() { return fechaInicio; }
+  public void setFechaInicio(String fechaInicio) {
+    this.fechaInicio = fechaInicio;
+  }
 
-    public String getFechaFin() { return fechaFin; }
-    public void setFechaFin(String fechaFin) { this.fechaFin = fechaFin; }
+  public String getFechaFin() { return fechaFin; }
+  public void setFechaFin(String fechaFin) { this.fechaFin = fechaFin; }
 
-    // La PK es compuesta -> usamos las DOS columnas en equals y hashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Ocupa)) return false;
-        Ocupa otro = (Ocupa) o;
-        
-        return Objects.equals(nssEmpleado, otro.nssEmpleado) &&
-         Objects.equals(codigoPlaza, otro.codigoPlaza);
-    }
+  // La PK es compuesta -> usamos las DOS columnas en equals y hashCode
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (!(o instanceof Ocupa))
+      return false;
+    Ocupa otro = (Ocupa)o;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(nssEmpleado, codigoPlaza);
-    }
+    return Objects.equals(nssEmpleado, otro.nssEmpleado) &&
+        Objects.equals(codigoPlaza, otro.codigoPlaza);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(nssEmpleado, codigoPlaza);
+  }
 }
