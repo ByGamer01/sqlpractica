@@ -127,8 +127,8 @@ public class NominaPanel extends JPanel {
   }
 
   /**
-   * Construye un objeto Nomina a partir del formulario
-   * Muestra un error y devuelve null si la validación falla
+   * Construimos un objeto Nomina a partir del formulario
+   * Mostramos un error y devolvemos null si la validación falla
    *
    * @param conId true si queremos leer también el ID (al editar)
    *              false al crear (el ID lo asigna la BD)
