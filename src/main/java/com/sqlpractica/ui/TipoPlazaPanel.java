@@ -2,14 +2,14 @@ package com.sqlpractica.ui;
 
 import com.sqlpractica.dao.TipoPlazaDAO;
 import com.sqlpractica.model.TipoPlaza;
-import com.sqlpractica.ui.components.SectionHeader;
-import com.sqlpractica.ui.components.UiStyles;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -41,18 +41,8 @@ public class TipoPlazaPanel extends JPanel {
   private final JTextField tfNombre = new JTextField();
   private final JTextField tfFuncion = new JTextField();
 
-  private final Runnable volver;
-
-  public TipoPlazaPanel() { this(null); }
-
-  public TipoPlazaPanel(Runnable volver) {
-    this.volver = volver;
+  public TipoPlazaPanel() {
     setLayout(new BorderLayout(8, 8));
-    setBackground(UiStyles.BACKGROUND);
-
-    if (volver != null) {
-      add(new SectionHeader("Tipos de plaza", volver), BorderLayout.NORTH);
-    }
 
     // Selección por fila + listener para copiarla al formulario
     tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -62,40 +52,33 @@ public class TipoPlazaPanel extends JPanel {
       }
     });
 
-    UiStyles.styleTable(tabla);
-
-    JPanel contenido = UiStyles.contentPanel();
-    contenido.add(UiStyles.tableScroll(tabla), BorderLayout.CENTER);
-    add(contenido, BorderLayout.CENTER);
+    add(new JScrollPane(tabla), BorderLayout.CENTER);
 
     // Formulario: 2 filas de campos + 1 fila de botones
-    JPanel formulario = UiStyles.formCard(3);
+    JPanel formulario = new JPanel(new GridLayout(3, 2, 4, 4));
     formulario.add(new JLabel("Nombre:"));
     formulario.add(tfNombre);
     formulario.add(new JLabel("Función:"));
     formulario.add(tfFuncion);
 
-    JButton btCrear = UiStyles.actionButton("Crear", UiStyles.SUCCESS);
-    JButton btEditar = UiStyles.actionButton("Editar", UiStyles.PRIMARY);
-    JButton btEliminar = UiStyles.actionButton("Eliminar", UiStyles.DANGER);
-    JButton btLimpiar = UiStyles.actionButton("Limpiar", UiStyles.SECONDARY);
-
-    UiStyles.styleTextField(tfNombre);
-    UiStyles.styleTextField(tfFuncion);
+    JButton btCrear = new JButton("Crear");
+    JButton btEditar = new JButton("Editar");
+    JButton btEliminar = new JButton("Eliminar");
+    JButton btLimpiar = new JButton("Limpiar");
 
     btCrear.addActionListener(e -> crear());
     btEditar.addActionListener(e -> editar());
     btEliminar.addActionListener(e -> eliminar());
     btLimpiar.addActionListener(e -> limpiar());
 
-    JPanel botones = UiStyles.buttonRow();
+    JPanel botones = new JPanel(new GridLayout(1, 4, 4, 4));
     botones.add(btCrear);
     botones.add(btEditar);
     botones.add(btEliminar);
     botones.add(btLimpiar);
     formulario.add(botones);
 
-    contenido.add(formulario, BorderLayout.SOUTH);
+    add(formulario, BorderLayout.SOUTH);
 
     recargar();
   }
