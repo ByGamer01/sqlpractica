@@ -52,7 +52,7 @@ public class Nomina {
     this.codigoPlaza = codigoPlaza;
   }
 
-  // Igualdad por la PK (id)
+  // Comparamos por la PK (id)
   @Override
   public boolean equals(Object o) {
     if (this == o)
