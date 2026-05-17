@@ -41,12 +41,12 @@ public final class Database {
   // Constructor privado: nadie puede hacer "new Database()"
   private Database() {}
 
-  /** Devuelve el último error registrado por esta clase */
+  /** Devolvemos el último error registrado por esta clase */
   public static String getMensajeError() { return mensajeError; }
 
   /**
-   * Devuelve la conexión compartida. Si no existe la abre y activa las FK
-   * Devuelve null si no se puede conectar (el error queda en mensajeError)
+   * Devolvemos la conexión compartida. Si no existe la abre y activa las FK
+   * Devolvemos null si no se puede conectar (el error queda en mensajeError)
    * synchronized para que dos hilos no creen dos conexiones a la vez
    */
   public static synchronized Connection obtenerConexion() {
@@ -70,8 +70,8 @@ public final class Database {
   }
 
   /**
-   * Crea las tablas si todavía no existen. Se llama una vez al arrancar
-   * Devuelve true si todo fue bien, false si hubo algún error
+   * Creamos las tablas si todavía no existen. Se llama una vez al arrancar
+   * Devolvemos true si todo fue bien, false si hubo algún error
    *
    * Cada string del array es una sentencia SQL DDL (Data Definition
    * Language). El IF NOT EXISTS evita errores si ya están creadas
@@ -161,7 +161,7 @@ public final class Database {
   }
 
   /**
-   * Cierra la conexión. Se llama desde el shutdown hook de Main
+   * Cerramos la conexión. Se llama desde el shutdown hook de Main
    * Si no la ponemos no nos funcionará el cierre automático de la conexión y el
    * programa se quedará colgado al salir. synchronized para que no se cierre
    * mientras se está usando
